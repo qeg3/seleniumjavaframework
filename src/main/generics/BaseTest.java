@@ -82,21 +82,14 @@ public abstract class BaseTest implements AutomationConstants{
     @BeforeMethod
     public void startTest(Method method){
         String testName=method.getName();
-        reporter=extent.createTest(testName);
-        reporter.info("Started Executing: "+testName);
+
 
     }
 
     @AfterMethod
     public void endTest(Method method){
         String testName=method.getName();
-        if(testName.equals(ITestResult.SUCCESS)){
-            reporter.pass(testName+" : has Successfully Executed");
-        }else if (testName.equals(ITestResult.FAILURE)){
-            reporter.fail(testName+ ": has Failed to Execute");
-        }else if(testName.equals(ITestResult.SKIP)){
-            reporter.skip(testName+" : has got Skipped from Exection");
-        }
+
     }
 
     @AfterSuite
