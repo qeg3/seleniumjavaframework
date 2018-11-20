@@ -337,11 +337,10 @@ public class CommonMethods extends BaseTest {
      * @param eleName is the name of the element on which Click Action to be performed
      */
 
-    public void clickElement(long time, String by, String value, String eleName){
+    public void visabilityOfElement(long time, String by, String value, String eleName){
         WebDriverWait wait=new WebDriverWait(driver,time);
         try{
             WebElement ele=wait.until(ExpectedConditions.visibilityOf(findElement(by,value)));
-            ele.click();
             //reporter.log(Status.PASS,"Clicked on: "+eleName);
         }
         catch (Exception e){
@@ -359,7 +358,7 @@ public class CommonMethods extends BaseTest {
      * @param data is the test data
      */
 
-    public void sendkeys(String by, String value, String data){
+    public void sendKeys(String by, String value, String data){
         WebElement ele=findElement(by,value);
         ele.clear();
         ele.sendKeys(data);
@@ -569,24 +568,70 @@ public class CommonMethods extends BaseTest {
     }
 
     //------------------------------------------------32--------------------------------------------------------------//
+
+    /**
+     *
+     * @param driver
+     * @param by
+     * @param value
+     * @param Text
+     * @return
+     */
+
     public String print_Contant(WebDriver driver,String by, String value,String Text){
         String text="";
         try {
             List<WebElement> ele = findElements(by, value);
             int alllinks = ele.size();
             reporter.log(Status.INFO,"Total no of "+Text+" : " + alllinks);
-            logger.log(Status.INFO,Text+" names are as follows: ");
+            reporter.log(Status.INFO,Text+" names are as follows: ");
             for (int i = 0; i < alllinks; i++) {
                 WebElement link = ele.get(i);
                 text = link.getText();
-                logger.log(Status.INFO,i + 1 + ": " + text);
+                reporter.log(Status.INFO,i + 1 + ": " + text);
             }
         }catch (Exception e){
-            logger.log(Status.FAIL,"No "+Text+"'s are present in side the Teaser");
+            reporter.log(Status.FAIL,"No "+Text+"'s are present in side the Teaser");
         }
         return text;
     }
-    }//------------------------------------------------33--------------------------------------------------------------//
 
+    //------------------------------------------------33--------------------------------------------------------------//
 
+    /**
+     *
+     * @param by
+     * @param value
+     */
+
+    public void highLighterMethod(String by,String value){
+        WebElement ele = findElement(by, value);
+        jsExecutor().executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", ele);
+    }
+
+    //------------------------------------------------34--------------------------------------------------------------//
+
+    // Handling Frames
+
+    public void handleFrame(String by, String value,String frameBy,String expValue){
+        List<WebElement> frames = findElements(by, value);
+        int frameSize = frames.size();
+        reporter.log(Status.PASS,"Total no of frames in the list are : "+frameSize);
+        switch (frameBy){
+            case "id":
+                driver.switchTo().frame(expValue);
+                break;
+            case "name":
+                driver.switchTo().frame(expValue);
+                break;
+            case "index":
+                driver.switchTo().frame(expValue);
+                break;
+        }
+    }
+
+    //------------------------------------------------35--------------------------------------------------------------//
+    // Verifying weather Element is Enabled or disabled
+    // Data base Connectivity using SQL
+    // Data base Connectivity using oracle
 }
