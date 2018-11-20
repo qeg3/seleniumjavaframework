@@ -18,7 +18,7 @@ public interface AutomationConstants {
 
     public static  final String SAFARI_VALUE="";
 
-    public static final String REPORTS_PATH="/Reports/TennisChannel_AutomationReport.html";
+    public static final String REPORTS_PATH="/Reports/AutomationReport.html";
 
     public static final String PHOTOPATH="Screenshots";
 }
