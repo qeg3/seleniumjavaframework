@@ -21,4 +21,7 @@ public interface AutomationConstants {
     public static final String REPORTS_PATH="/Reports/AutomationReport.html";
 
     public static final String PHOTOPATH="Screenshots";
+
+    public static final String SQL_DRIVER="";
+    public static final String ORACLE_DRIVER="";
 }
