@@ -22,6 +22,7 @@ public interface AutomationConstants {
 
     public static final String PHOTOPATH="Screenshots";
 
-    public static final String SQL_DRIVER="";
+    public static final String SQL_DRIVER="com.microsoft.sqlserver.jdbc.SQLServerDriver";
+    
     public static final String ORACLE_DRIVER="";
 }
