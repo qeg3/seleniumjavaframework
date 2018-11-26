@@ -7,44 +7,43 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.safari.SafariDriver;
-import org.testng.ITestResult;
 import org.testng.annotations.*;
-
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BaseTest implements AutomationConstants{
     public static WebDriver driver;
-    public static ExtentHtmlReporter report;
+    private static ExtentHtmlReporter report;
     public static ExtentTest reporter;
-    public static ExtentReports extent;
+    private static ExtentReports extent;
+    private static final long ITO =50;
 
-    @Parameters({"platform","browser"})
+    @Parameters({"Platform","TargetDriver"})
     @BeforeSuite
-    public WebDriver open_Browser(String platform, String browser){
+    public WebDriver open_Browser(String Platform, String TargetDriver){
 
-        if(platform.equalsIgnoreCase("Windows")){
+        if(Platform.equalsIgnoreCase("Windows")){
 
-            if(browser.equalsIgnoreCase("Chrome")){
+            if(TargetDriver.equalsIgnoreCase("Chrome")){
                 System.setProperty(CHROME_KEY,CHROME_WIN_VALUE);
                 driver = new ChromeDriver();
             }
-            else if(browser.equalsIgnoreCase("FireFox")) {
+            else if(TargetDriver.equalsIgnoreCase("FireFox")) {
                 System.setProperty(GECKO_KEY, GECKO_VALUE);
                 driver = new FirefoxDriver();
             }
         }
-        else if (platform.equalsIgnoreCase("Mac")){
+        else if (Platform.equalsIgnoreCase("Mac")){
 
-            if(browser.equalsIgnoreCase("Chrome")){
+            if(TargetDriver.equalsIgnoreCase("Chrome")){
                 System.setProperty(CHROME_KEY,CHROME_MAC_VALUE);
                 driver = new ChromeDriver();
             }
-            else if (browser.equalsIgnoreCase("Safari")){
+            else if (TargetDriver.equalsIgnoreCase("Safari")){
                 System.setProperty(SAFARI_KEY,SAFARI_VALUE);
                 driver = new SafariDriver();
             }
-            else if(browser.equalsIgnoreCase("FireFox")) {
+            else if(TargetDriver.equalsIgnoreCase("FireFox")) {
                 System.setProperty(GECKO_KEY, GECKO_MAC_VALUE);
                 driver = new FirefoxDriver();
             }
@@ -52,7 +51,7 @@ public abstract class BaseTest implements AutomationConstants{
 
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
-        driver.manage().timeouts().implicitlyWait(30,TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(ITO,TimeUnit.SECONDS);
 
         return driver;
     }
@@ -81,14 +80,14 @@ public abstract class BaseTest implements AutomationConstants{
 
     @BeforeMethod
     public void startTest(Method method){
-        String testName=method.getName();
+        //String testName=method.getName();
 
 
     }
 
     @AfterMethod
     public void endTest(Method method){
-        String testName=method.getName();
+        //String testName=method.getName();
 
     }
 
@@ -96,6 +95,7 @@ public abstract class BaseTest implements AutomationConstants{
     public void tearDown() {
         driver.close();
         driver.quit();
+
         report.flush();
 
     }

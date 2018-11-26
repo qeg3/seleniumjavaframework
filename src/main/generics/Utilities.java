@@ -12,7 +12,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class utilities {
+public class Utilities {
 
         //Method to read the data from excel test data sheet and write that into a hash map
         public static Map<String,  Map<String, List<String>>> readExcelData() throws IOException {

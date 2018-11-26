@@ -23,20 +23,20 @@ public class Listners extends BaseTest implements ITestListener {
     }
 
     @Override
-    public void onTestFailure(ITestResult result) {
+    public void onTestFailure(ITestResult result)  {
         String testName = result.getName();
         reporter.fail(testName+" : has Failed to Execute Because of : "+result.getThrowable());
-
-        try{
-            Robot r=new Robot();
+        try {
+            Robot r = new Robot();
             Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-            Rectangle screenRect=new Rectangle(d);
+            Rectangle screenRect = new Rectangle(d);
             BufferedImage img = r.createScreenCapture(screenRect);
-            String now=CommonMethods.getFormatedDateTime();
-            ImageIO.write(img, "png",new File(PHOTOPATH+testName+now+".png"));
-            reporter.info( "The "+testName+" has Failed and the Screenshot is : "+PHOTOPATH+testName+now+".png");
-        }
-        catch(Exception e){
+            String now = CommonMethods.getFormatedDateTime();
+            ImageIO.write(img, "png", new File(PHOTOPATH + testName + now + ".png"));
+            reporter.info("The " + testName + " has Failed and the Screenshot is : " + PHOTOPATH + testName + now + ".png");
+        }catch (Exception e){
+
+            reporter.error("Error Occurred while taking Screenshot");
         }
     }
 

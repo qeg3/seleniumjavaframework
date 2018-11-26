@@ -2,20 +2,16 @@ package main.generics;
 
 import com.aventstack.extentreports.Status;
 import org.apache.commons.io.FileUtils;
-import org.apache.tools.ant.taskdefs.condition.IsTrue;
 import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,71 +20,32 @@ import java.util.concurrent.TimeUnit;
 
 public class CommonMethods extends BaseTest {
 
-    public static WebElement element;
-
     //------------------------------------------------1---------------------------------------------------------------//
+
+    private static WebElement element;
+    private static final long ETO =50;
+    private Actions action = new Actions(driver);
+    private JavascriptExecutor jse=(JavascriptExecutor)driver;
+    //------------------------------------------------2---------------------------------------------------------------//
 
     /**
      * This method is to initialize page.
      */
-    public void GenericPage() {
+    public void genericPage() {
         PageFactory.initElements(driver, this);
-    }
-    //------------------------------------------------2---------------------------------------------------------------//
-
-    /**
-     * This method is used to initialize the java script execution method.
-     * @return jse;
-     */
-    public static JavascriptExecutor jsExecutor(){
-        JavascriptExecutor jse=(JavascriptExecutor)driver;
-        return jse;
     }
     //------------------------------------------------3---------------------------------------------------------------//
 
     /**
      * This Method is used to get the current date and time.
-     * @getFormatedDateTime is the format in which date has to return,
+     * is the format in which date has to return,
      * @return the current date and time in "dd_MM_yyyy_hh_mm_ss" format.
      */
     public static String getFormatedDateTime(){
         SimpleDateFormat simpleDate = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss");
         return simpleDate.format(new Date());
     }
-    //------------------------------------------------4---------------------------------------------------------------//
-
-    /**
-     * This method is used for the initialize of Actions Class.
-     * This Method is used to initialize composite actions.
-     * @return action.
-     */
-    public static Actions getAction() {
-        Actions action = new Actions(driver);
-        return action;
-    }
-    //------------------------------------------------5---------------------------------------------------------------//
-
-    /**
-     * This method is used for the initialize of Robot Class.
-     * @return robot.
-     * @throws Exception handling Exception.
-     */
-    public static Robot getRobot() throws Exception{
-        Robot robot=new Robot();
-        return robot;
-    }
-    //-------------------------------------------------6--------------------------------------------------------------//
-
-    /**
-     * This Method is used for the initialize Explicit Waiting time.
-     * @param time is the Explicit Waiting time to find the Element
-     * @return wait;
-     */
-    public static Wait webDriverWait(long time){
-        WebDriverWait wait = new WebDriverWait(driver,time);
-        return wait;
-    }
-    //-------------------------------------------------7--------------------------------------------------------------//
+    //-------------------------------------------------4--------------------------------------------------------------//
 
     /**
      * This Method is used to find the Element by generic search taking the locator type and locator value
@@ -97,7 +54,7 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @return element.
      */
-    public WebElement findElement(String by,String value){
+    private WebElement findElement(String by,String value){
         switch (by) {
             case "id":
                 element = driver.findElement(By.id(value));
@@ -126,7 +83,7 @@ public class CommonMethods extends BaseTest {
         }
         return element;
     }
-    //------------------------------------------------8---------------------------------------------------------------//
+    //------------------------------------------------5---------------------------------------------------------------//
 
     /**
      *This Method is used to find the Element's by generic search taking the locator type and locator value
@@ -135,7 +92,7 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @return element.
      */
-    public static List<WebElement> findElements(String by, String value) {
+    private static List<WebElement> findElements(String by, String value) {
 
         List<WebElement> element=null;
         switch (by) {
@@ -166,51 +123,46 @@ public class CommonMethods extends BaseTest {
         }
         return element;
     }
-    //------------------------------------------------9---------------------------------------------------------------//
+    //------------------------------------------------6---------------------------------------------------------------//
 
     /**
-     * This method is used for Synchranizatio of waiting condition
+     * This method is used to specify the Waiting Condition.
      * @param i is the condition to wait for no of seconds before it go for next next step
      */
-    public  int sleep(int i){
-        try {
+    public  int sleep(int i)throws InterruptedException{
             Thread.sleep(i*1000);
-        } catch (InterruptedException e) {
-        }
         return i;
     }
-    //-------------------------------------------------10-------------------------------------------------------------//
+    //-------------------------------------------------7-------------------------------------------------------------//
 
     /**
      * This Method will compare the expected title with the actual title and.
-     * @paramaTitle is the title which we r getting from(driver.getTitle()),
+     * Title is the title which we r getting from(driver.getTitle()),
      * @param eTitle is expected title which we r going to pass and it is compared with the actual title.
      */
     public void verifyTitle(String eTitle){
             String atitle=driver.getTitle();
             Assert.assertEquals(atitle, eTitle);
     }
-    //-----------------------------------------------11---------------------------------------------------------------//
+    //------------------------------------------------8---------------------------------------------------------------//
 
     /**
      * This Method will wait till  the timeout (Number of seconds to wait to find the Title to appear.
      * and compare the expected title is matching with the actual title,
-     * @param time is the Explicit Waiting time to find the Element,
-     * @throws Exception Handling Exception.
      */
-    public static void verifyTitle(long time, String eTitle)throws Exception {
+    public static void waitTitleContain(String eTitle) {
         try{
-                webDriverWait(time).until(ExpectedConditions.titleContains(eTitle));
+            new WebDriverWait(driver,ETO).until(ExpectedConditions.titleContains(eTitle));
                 String aTitle=driver.getTitle();
-                //reporter.log(Status.PASS,"Page: "+aTitle+" is Verified");
+                reporter.log(Status.PASS,"Page: "+aTitle+" is Verified");
             }
             catch(Exception e){
                 String aTitle=driver.getTitle();
-                //reporter.log(Status.FAIL,"Actual Title is NOT Matching with the Expected Title  Actual Title is: "+aTitle+" and Expected Title is: "+eTitle);
+                reporter.log(Status.FAIL,"Actual Title is NOT Matching with the Expected Title  Actual Title is: "+aTitle+" and Expected Title is: "+eTitle);
                 Assert.fail();
             }
         }
-    //------------------------------------------------12--------------------------------------------------------------//
+    //-------------------------------------------------9--------------------------------------------------------------//
 
     /**
      * This Method is used to get the URL of the current page
@@ -219,7 +171,7 @@ public class CommonMethods extends BaseTest {
     public String getCurrentUrl() {
             return (driver.getCurrentUrl());
         }
-    //------------------------------------------------13--------------------------------------------------------------//
+    //------------------------------------------------10--------------------------------------------------------------//
 
     /**
      * This method is used to enter the url
@@ -228,39 +180,38 @@ public class CommonMethods extends BaseTest {
     public void enter_URL(String URL) {
         driver.get(URL);
     }
-    //------------------------------------------------14--------------------------------------------------------------//
+    //------------------------------------------------11--------------------------------------------------------------//
 
     /**
-     * This Method is used to get multiple screenshots and store the screenshots in the specefied location or
+     * This Method is used to get multiple screenshots and store the screenshots in the location or
      * folder in the ".png" format
      * @param imageFolderPath we need to specify the folder path in which we need to store all our screenshots
      * @return the Screenshot in the imageFolderPath
-     * @throws Exception Handling Exception.
      */
-    public String getScreenShot(String imageFolderPath) throws Exception{
+    public String getScreenShot(String imageFolderPath) {
         String imagePath=imageFolderPath+"/"+getFormatedDateTime()+".png";
         TakesScreenshot page = (TakesScreenshot) driver;
         try {
             FileUtils.copyFile(page.getScreenshotAs(OutputType.FILE), new File(imagePath));
-            //reporter.log(Status.INFO,"The ScreenShot is: "+getFormatedDateTime());
+            reporter.log(Status.INFO,"The ScreenShot is: "+getFormatedDateTime());
         }
         catch (Exception e) {
-            //reporter.log(Status.INFO,"An Error occurred while taking ScreenShot");
+            reporter.log(Status.INFO,"An Error occurred while taking ScreenShot");
             Assert.fail();
         }
         return imagePath;
     }
-    //-----------------------------------------------15---------------------------------------------------------------//
+    //-----------------------------------------------12---------------------------------------------------------------//
 
     /**
-     *This method is used Synchranization of FindElement and FindElements
+     *This method is used synchronization of FindElement and FindElements
      * @param time is the Implicit Waiting time to find the Element
      */
-    public void implicitwait(long time){
+    public void implicitWait(long time){
 
         driver.manage().timeouts().implicitlyWait(time,TimeUnit.SECONDS);
     }
-    //------------------------------------------------16--------------------------------------------------------------//
+    //------------------------------------------------13--------------------------------------------------------------//
 
     /**
      * This Method is used to perform click Action
@@ -270,16 +221,16 @@ public class CommonMethods extends BaseTest {
     public void click(String by, String value, String eleName){
        try{
            findElement(by,value).click();
-           //reporter.log(Status.PASS,"Clicked on: "+eleName);
+           reporter.log(Status.PASS,"Clicked on: "+eleName);
        }catch (Exception e){
-           //reporter.log(Status.FAIL,"FAIL: "+eleName+" is not appeared even after the time out");
+           reporter.log(Status.FAIL,"FAIL: "+eleName+" is not appeared even after the time out");
            Assert.fail();
        }
     }
-    //------------------------------------------------17--------------------------------------------------------------//
+    //------------------------------------------------14--------------------------------------------------------------//
 
     /**
-     * This Method is used to perform Composit Click Action on the Element
+     * This Method is used to perform Composite Click Action on the Element
      * @param by Element locator Type,
      * @param value Element locator Value,
      * @param eleName is the name of the element on which Click Action to be performed
@@ -288,34 +239,32 @@ public class CommonMethods extends BaseTest {
 
        try{
            WebElement ele=findElement(by,value);
-           getAction().moveToElement(ele).click().perform();
-           //reporter.log(Status.PASS,"Clicked on: "+eleName);
+           action.moveToElement(ele).click().perform();
+           reporter.log(Status.PASS,"Clicked on: "+eleName);
        }catch (Exception e) {
-           //reporter.log(Status.FAIL, eleName + " is not appeared to click on the element");
+           reporter.log(Status.FAIL, eleName + " is not appeared to click on the element");
            Assert.fail();
        }
     }
-    //------------------------------------------------18--------------------------------------------------------------//
+    //------------------------------------------------15--------------------------------------------------------------//
 
     /**
      * This method is used to click on the Element by waiting un till the element to be appear
-     * @param time is the Explicit Waiting time to find the Element
      * @param by Element locator Type,
      * @param value Element locator Value,
-     * @param eleName is the name of the element on which Click Action to be performed
      */
-    public void visabilityOfElement(long time, String by, String value, String eleName){
-        WebDriverWait wait=new WebDriverWait(driver,time);
+    public void visibilityOfElement(String by, String value,String eleName){
+        WebDriverWait wait=new WebDriverWait(driver,ETO);
         try{
-            WebElement ele=wait.until(ExpectedConditions.visibilityOf(findElement(by,value)));
-            //reporter.log(Status.PASS,"Clicked on: "+eleName);
+            wait.until(ExpectedConditions.visibilityOf(findElement(by,value)));
+            reporter.log(Status.PASS,"Clicked on: "+eleName);
         }
         catch (Exception e){
-            //reporter.log(Status.FAIL,eleName+" is not appeared even after the time out");
+            reporter.log(Status.FAIL,eleName+" is not appeared even after the time out");
             Assert.fail();
         }
     }
-    //------------------------------------------------19--------------------------------------------------------------//
+    //------------------------------------------------16--------------------------------------------------------------//
 
     /**
      * This Method is used to enter the test data in to the required text field
@@ -328,7 +277,7 @@ public class CommonMethods extends BaseTest {
         ele.clear();
         ele.sendKeys(data);
     }
-    //------------------------------------------------20--------------------------------------------------------------//
+    //------------------------------------------------17--------------------------------------------------------------//
 
     /**
      * This Method is used to get the text present in the locator path
@@ -338,20 +287,19 @@ public class CommonMethods extends BaseTest {
      */
     public String getText(String by, String value){
         String text = findElement(by, value).getText();
-        //reporter.log(Status.INFO,returnText);
+        reporter.log(Status.INFO,text);
         return text;
     }
-    //------------------------------------------------21--------------------------------------------------------------//
+    //------------------------------------------------18--------------------------------------------------------------//
 
     /**
      * This Method is used to verify the URL of the WebPage
      * @param expectedUrl is the URL that we are going to compare with the obtained URL
-     * @param time is the Explicit Waiting time to find the Element
      */
-    public void verifyURLhas(String expectedUrl, long time){
-        webDriverWait(time).until(ExpectedConditions.urlContains(expectedUrl));
+    public void verifyURL(String expectedUrl){
+        new WebDriverWait(driver,ETO).until(ExpectedConditions.urlContains(expectedUrl));
     }
-    //------------------------------------------------22--------------------------------------------------------------//
+    //------------------------------------------------19--------------------------------------------------------------//
 
     /**
      * This Method is used to print the names of all the matching elements
@@ -359,12 +307,12 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @param Text is the Message to be printed
      */
-    public void count_Links(String by, String value, String Text){
+    public void countLinks(String by, String value, String Text){
             List<WebElement> ele = findElements(by, value);
             int alllinks = ele.size();
-        //reporter.log(Status.INFO,Text + alllinks);
+        reporter.log(Status.INFO,Text + alllinks);
     }
-    //------------------------------------------------23--------------------------------------------------------------//
+    //------------------------------------------------20--------------------------------------------------------------//
 
     /**
      * This Method is used to Select any Element in the list Box by sending Index as input.
@@ -377,7 +325,7 @@ public class CommonMethods extends BaseTest {
         Select select=new Select(ele);
         select.selectByIndex(index);
     }
-    //------------------------------------------------24--------------------------------------------------------------//
+    //------------------------------------------------21--------------------------------------------------------------//
 
     /**
      * This Method is used to Select any Element in the list Box by sending expValue as input.
@@ -390,7 +338,7 @@ public class CommonMethods extends BaseTest {
         Select select=new Select(ele);
         select.selectByValue(expValue);
     }
-    //------------------------------------------------25--------------------------------------------------------------//
+    //------------------------------------------------22--------------------------------------------------------------//
 
     /**
      * This Method is used to Select any Element in the list Box by sending Text as input.
@@ -403,17 +351,7 @@ public class CommonMethods extends BaseTest {
         Select select=new Select(ele);
         select.selectByVisibleText(Text);
     }
-    //------------------------------------------------26--------------------------------------------------------------//
-
-    /**
-     * This Method is used to find the list box and print all the elements present in the list Box.
-     * @param by Element locator Type,
-     * @param value Element locator Value,
-     */
-    public void printListBoxItems(String by,String value){
-        List<WebElement> ele = findElements(by, value);
-    }
-    //------------------------------------------------27--------------------------------------------------------------//
+    //------------------------------------------------23--------------------------------------------------------------//
 
     /**
      * This Method is used to Upload a file in to any WebElement or the Popup.
@@ -424,25 +362,26 @@ public class CommonMethods extends BaseTest {
 
     public void fileUPLoad(String by,String value) throws Exception{
         findElement(by,value).click();
+        Robot rb=new Robot();
         // Press Enter
-        getRobot().keyPress(KeyEvent.VK_ENTER);
+        rb.keyPress(KeyEvent.VK_ENTER);
 
         // Release Enter
-        getRobot().keyRelease(KeyEvent.VK_ENTER);
+        rb.keyRelease(KeyEvent.VK_ENTER);
 
         // Press CTRL+V
-        getRobot().keyPress(KeyEvent.VK_CONTROL);
-        getRobot().keyPress(KeyEvent.VK_V);
+        rb.keyPress(KeyEvent.VK_CONTROL);
+        rb.keyPress(KeyEvent.VK_V);
 
         // Release CTRL+V
-        getRobot().keyRelease(KeyEvent.VK_CONTROL);
-        getRobot().keyRelease(KeyEvent.VK_V);
+        rb.keyRelease(KeyEvent.VK_CONTROL);
+        rb.keyRelease(KeyEvent.VK_V);
 
         //Press Enter
-        getRobot().keyPress(KeyEvent.VK_ENTER);
-        getRobot().keyRelease(KeyEvent.VK_ENTER);
+        rb.keyPress(KeyEvent.VK_ENTER);
+        rb.keyRelease(KeyEvent.VK_ENTER);
     }
-    //------------------------------------------------28--------------------------------------------------------------//
+    //------------------------------------------------24--------------------------------------------------------------//
 
     /**
      * This Method is used to swap the Elements from one place to another.
@@ -454,9 +393,9 @@ public class CommonMethods extends BaseTest {
     public void dragAndDrop(String by1,String val1,String by2,String val2){
         WebElement ele1 = findElement(by1, val1);
         WebElement ele2 = findElement(by2, val2);
-        getAction().dragAndDrop(ele1,ele2).build().perform();
+        action.dragAndDrop(ele1,ele2).build().perform();
     }
-    //------------------------------------------------29--------------------------------------------------------------//
+    //------------------------------------------------25--------------------------------------------------------------//
 
     /**
      * This Method is used to move the mouse to the Menu item and click on the sub Element.
@@ -464,16 +403,15 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @param subBy SubElement locator Type,
      * @param subValue SubElement locator Value,
-     * @throws Exception Handling Exception.
      */
-    public void clickMenuSubElement(String by,String value,String subBy,String subValue) throws Exception {
+    public void clickMenuSubElement(String by,String value,String subBy,String subValue) throws InterruptedException{
         WebElement ele =findElement(by,value);
-        getAction().moveToElement(ele).build().perform();
+        action.moveToElement(ele).build().perform();
         sleep(5);
         WebElement subEle = findElement(subBy,subValue);
         subEle.click();
     }
-    //------------------------------------------------30--------------------------------------------------------------//
+    //------------------------------------------------26--------------------------------------------------------------//
 
     /**
      *This Method is used to check no links present in the WebPage and print all the links.
@@ -486,10 +424,10 @@ public class CommonMethods extends BaseTest {
         String text="";
         try {
             List<WebElement> ele = findElements(by, value);
-            int alllinks = ele.size();
-            reporter.log(Status.INFO,"Total no of "+Text+" : " + alllinks);
+            int alllinksinks = ele.size();
+            reporter.log(Status.INFO,"Total no of "+Text+" : " + alllinksinks);
             reporter.log(Status.INFO,Text+" names are as follows: ");
-            for (int i = 0; i < alllinks; i++) {
+            for (int i = 0; i < alllinksinks; i++) {
                 WebElement link = ele.get(i);
                 text = link.getText();
                 reporter.log(Status.INFO,i + 1 + ": " + text);
@@ -499,7 +437,7 @@ public class CommonMethods extends BaseTest {
         }
         return text;
     }
-    //------------------------------------------------31--------------------------------------------------------------//
+    //------------------------------------------------27--------------------------------------------------------------//
 
     /**
      * This Method is used to Highlight any WebElement On Demand.
@@ -508,9 +446,9 @@ public class CommonMethods extends BaseTest {
      */
     public void highLighterMethod(String by,String value){
         WebElement ele = findElement(by, value);
-        jsExecutor().executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", ele);
+        jse.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", ele);
     }
-    //------------------------------------------------32--------------------------------------------------------------//
+    //------------------------------------------------28--------------------------------------------------------------//
 
     /**
      * This Method is used is used to Count the total no of frames present inside the Web page.
@@ -522,7 +460,7 @@ public class CommonMethods extends BaseTest {
         int frameSize = frames.size();
         reporter.log(Status.PASS,"Total no of frames in the list are : "+frameSize);
     }
-    //------------------------------------------------33--------------------------------------------------------------//
+    //------------------------------------------------29--------------------------------------------------------------//
 
     /**
      * This Method is used is used to Count the total no of frames present inside the Web page and
@@ -536,7 +474,7 @@ public class CommonMethods extends BaseTest {
         reporter.log(Status.PASS,"Total no of frames in the list are : "+frameSize);
         driver.switchTo().frame(index);
     }
-    //------------------------------------------------34--------------------------------------------------------------//
+    //------------------------------------------------30--------------------------------------------------------------//
 
     /**
      * This Method is used is used to Count the total no of frames present inside the Web page and
@@ -550,7 +488,7 @@ public class CommonMethods extends BaseTest {
         reporter.log(Status.PASS,"Total no of frames in the list are : "+frameSize);
         driver.switchTo().frame(Name);
     }
-    //------------------------------------------------35--------------------------------------------------------------//
+    //------------------------------------------------31--------------------------------------------------------------//
 
     /**
      * This Method is used is used to Count the total no of frames present inside the Web page and
@@ -564,7 +502,7 @@ public class CommonMethods extends BaseTest {
         reporter.log(Status.PASS,"Total no of frames in the list are : "+frameSize);
         driver.switchTo().frame(ID);
     }
-    //------------------------------------------------36--------------------------------------------------------------//
+    //------------------------------------------------32--------------------------------------------------------------//
 
     /**
      * This Method will check weather the given Element is Enabled or Disabled and
@@ -574,6 +512,7 @@ public class CommonMethods extends BaseTest {
      * @param expValue expected Result that is compared with the Actual Result
      */
     public  void isEnabled(String by, String value, String expValue){
+
         WebElement ele = findElement(by, value);
         try {
             if (ele.isEnabled()) {
@@ -585,7 +524,7 @@ public class CommonMethods extends BaseTest {
             Assert.fail();
         }
     }
-    //------------------------------------------------37--------------------------------------------------------------//
+    //------------------------------------------------33--------------------------------------------------------------//
 
     /**
      *  This Method is used to establish Connection with the DataBase and Execute the Query
@@ -603,7 +542,7 @@ public class CommonMethods extends BaseTest {
         ResultSet rs = stmt.executeQuery(sqlQuery);
         reporter.info("Sql query "+sqlQuery+" output is : "+rs);
     }
-    //------------------------------------------------38--------------------------------------------------------------//
+    //------------------------------------------------34--------------------------------------------------------------//
 
     /**
      *  This Method is used to establish Connection with the DataBase and Execute the Query
@@ -621,30 +560,30 @@ public class CommonMethods extends BaseTest {
         ResultSet rs = stmt.executeQuery(query);
         reporter.info("Oracle query "+query+" output is : "+rs);
     }
-    //------------------------------------------------39--------------------------------------------------------------//
+    //------------------------------------------------45--------------------------------------------------------------//
 
     /**
-     * This Method is used to establish Connection with the DataBase and Execute the Query
-     *  and gives out thr result of the Query in the results.
-     * @param dbName name of the data base
-     * @param dbURL url of the DataBase in which the Query has to be executed,
-     * @param sqlQuery The Executable Query to Execute.
-     * @throws SQLException handling Exceptions
+     * This method is used to scroll the web page to desired location and click on the Element.
+     * @param by Element locator Type,
+     * @param value Element locator Value,
+     * @param name Element name;
      */
-    public Connection conn = null;
-    private String dbName = null;
-    public void Database(String dbName, String dbURL,String sqlQuery)throws SQLException{
-        this.dbName = dbName;
+    public void clickElementByScrollPage(String by, String value, String name) {
+
         try {
-            Class.forName(SQL_DRIVER);
-            this.conn = DriverManager.getConnection(dbURL);//here put the new simple url.
-            Statement sta = conn.createStatement();
-            ResultSet result = sta.executeQuery(sqlQuery);
-            reporter.info("Oracle query "+sqlQuery+" output is : "+result);
+            WebElement ele = findElement(by, value);
+            try {
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", ele);
+                reporter.info(name + " is available and is scrolled into view.");
+            } catch (Exception e) {
+                reporter.error(name + " is not available and cannot be scrolled into view. Error: " + e);
+                throw e;
+            }
+            click(by, value, name);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            reporter.error("Unable to perform Click operation on the element " + name.trim() + "ERROR :" + e.getMessage().split("\n")[0].trim());
+            Assert.fail();
         }
     }
-    //------------------------------------------------40--------------------------------------------------------------//
+    //------------------------------------------------36--------------------------------------------------------------//
 }
