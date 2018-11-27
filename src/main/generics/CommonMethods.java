@@ -29,7 +29,7 @@ public class CommonMethods extends BaseTest {
     //------------------------------------------------2---------------------------------------------------------------//
 
     /**
-     * This method is to initialize page.
+     * This method is used to initialize generic page.
      */
     public void genericPage() {
         PageFactory.initElements(driver, this);
@@ -41,7 +41,7 @@ public class CommonMethods extends BaseTest {
      * is the format in which date has to return,
      * @return the current date and time in "dd_MM_yyyy_hh_mm_ss" format.
      */
-    public static String getFormatedDateTime(){
+    public static String getFormattedDateTime(){
         SimpleDateFormat simpleDate = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss");
         return simpleDate.format(new Date());
     }
@@ -54,7 +54,7 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @return element.
      */
-    private WebElement findElement(String by,String value){
+    public WebElement findElement(String by,String value){
         switch (by) {
             case "id":
                 element = driver.findElement(By.id(value));
@@ -92,7 +92,7 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @return element.
      */
-    private static List<WebElement> findElements(String by, String value) {
+    public static List<WebElement> findElements(String by, String value) {
 
         List<WebElement> element=null;
         switch (by) {
@@ -189,11 +189,11 @@ public class CommonMethods extends BaseTest {
      * @return the Screenshot in the imageFolderPath
      */
     public String getScreenShot(String imageFolderPath) {
-        String imagePath=imageFolderPath+"/"+getFormatedDateTime()+".png";
+        String imagePath=imageFolderPath+"/"+getFormattedDateTime()+".png";
         TakesScreenshot page = (TakesScreenshot) driver;
         try {
             FileUtils.copyFile(page.getScreenshotAs(OutputType.FILE), new File(imagePath));
-            reporter.log(Status.INFO,"The ScreenShot is: "+getFormatedDateTime());
+            reporter.log(Status.INFO,"The ScreenShot is: "+getFormattedDateTime());
         }
         catch (Exception e) {
             reporter.log(Status.INFO,"An Error occurred while taking ScreenShot");
@@ -309,8 +309,8 @@ public class CommonMethods extends BaseTest {
      */
     public void countLinks(String by, String value, String Text){
             List<WebElement> ele = findElements(by, value);
-            int alllinks = ele.size();
-        reporter.log(Status.INFO,Text + alllinks);
+            int allLinks = ele.size();
+        reporter.log(Status.INFO,Text + allLinks);
     }
     //------------------------------------------------20--------------------------------------------------------------//
 
@@ -424,10 +424,10 @@ public class CommonMethods extends BaseTest {
         String text="";
         try {
             List<WebElement> ele = findElements(by, value);
-            int alllinksinks = ele.size();
-            reporter.log(Status.INFO,"Total no of "+Text+" : " + alllinksinks);
+            int allLinks = ele.size();
+            reporter.log(Status.INFO,"Total no of "+Text+" : " + allLinks);
             reporter.log(Status.INFO,Text+" names are as follows: ");
-            for (int i = 0; i < alllinksinks; i++) {
+            for (int i = 0; i < allLinks; i++) {
                 WebElement link = ele.get(i);
                 text = link.getText();
                 reporter.log(Status.INFO,i + 1 + ": " + text);
@@ -478,7 +478,7 @@ public class CommonMethods extends BaseTest {
 
     /**
      * This Method is used is used to Count the total no of frames present inside the Web page and
-     * Select the desired Frame by using the Value present inside the frame..
+     * Select the desired Frame by using the Value present inside the frame.
      * @param by Element locator Type,
      * @param value Element locator Value.
      */

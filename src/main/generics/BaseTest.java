@@ -6,6 +6,7 @@ import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.testng.annotations.*;
 import java.lang.reflect.Method;
@@ -31,6 +32,10 @@ public abstract class BaseTest implements AutomationConstants{
             else if(TargetDriver.equalsIgnoreCase("FireFox")) {
                 System.setProperty(GECKO_KEY, GECKO_VALUE);
                 driver = new FirefoxDriver();
+            }
+            else if (TargetDriver.equalsIgnoreCase("IE")){
+                System.setProperty(IE_KEY,IE_VALUE);
+                driver=new InternetExplorerDriver();
             }
         }
         else if (Platform.equalsIgnoreCase("Mac")){

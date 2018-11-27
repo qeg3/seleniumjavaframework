@@ -12,6 +12,10 @@ public interface AutomationConstants {
 
     public static  final String GECKO_VALUE="src/Test/resources/Drivers/geckodriver.exe";
 
+    public static  final String IE_KEY="";
+
+    public static  final String IE_VALUE="";
+
     public static  final String GECKO_MAC_VALUE="";
 
     public static  final String SAFARI_KEY="";
