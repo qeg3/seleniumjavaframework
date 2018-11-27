@@ -32,8 +32,8 @@ public class Listners extends BaseTest implements ITestListener {
             Rectangle screenRect = new Rectangle(d);
             BufferedImage img = r.createScreenCapture(screenRect);
             String now = CommonMethods.getFormattedDateTime();
-            ImageIO.write(img, "png", new File(PHOTOPATH + testName + now + ".png"));
-            reporter.info("The " + testName + " has Failed and the Screenshot is : " + PHOTOPATH + testName + now + ".png");
+            ImageIO.write(img, "png", new File(PHOTO_PATH + testName + now + ".png"));
+            reporter.info("The " + testName + " has Failed and the Screenshot is : " + PHOTO_PATH + testName + now + ".png");
         }catch (Exception e){
 
             reporter.error("Error Occurred while taking Screenshot");

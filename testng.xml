@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Suite" parallel="tests">
-    <parameter name="Platform" value="Windows"/><!--Platform config should be Windows,Mac,Mobile-->
-    <parameter name="TargetDriver" value="Chrome"/><!--TargetDriver config should be Chrome,Firefox,Safari,
+    <parameter name="platform" value="Windows"/><!--Platform config should be Windows,Mac,Mobile-->
+    <parameter name="targetDriver" value="Chrome"/><!--TargetDriver config should be Chrome,Firefox,Safari,
                                                         IE,Android,IOS should selected based on the platform selected -->
-    <test name="test">
+    <test name="Test">
 
         <classes>
 
-            <class name="Test."/>
+            <class name="com.test.Demo"/>
 
         </classes>
 

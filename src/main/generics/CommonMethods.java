@@ -22,10 +22,10 @@ public class CommonMethods extends BaseTest {
 
     //------------------------------------------------1---------------------------------------------------------------//
 
-    private static WebElement element;
+    public static WebElement element;
     private static final long ETO =50;
-    private Actions action = new Actions(driver);
-    private JavascriptExecutor jse=(JavascriptExecutor)driver;
+    public Actions action = new Actions(driver);
+    public JavascriptExecutor jse=(JavascriptExecutor)driver;
     //------------------------------------------------2---------------------------------------------------------------//
 
     /**
@@ -127,11 +127,11 @@ public class CommonMethods extends BaseTest {
 
     /**
      * This method is used to specify the Waiting Condition.
-     * @param i is the condition to wait for no of seconds before it go for next next step
+     * @param time is the condition to wait for no of seconds before it go for next step
      */
-    public  int sleep(int i)throws InterruptedException{
-            Thread.sleep(i*1000);
-        return i;
+    public  int sleep(int time)throws InterruptedException{
+            Thread.sleep(time*1000);
+        return time;
     }
     //-------------------------------------------------7-------------------------------------------------------------//
 
@@ -141,8 +141,8 @@ public class CommonMethods extends BaseTest {
      * @param eTitle is expected title which we r going to pass and it is compared with the actual title.
      */
     public void verifyTitle(String eTitle){
-            String atitle=driver.getTitle();
-            Assert.assertEquals(atitle, eTitle);
+            String aTitle=driver.getTitle();
+            Assert.assertEquals(aTitle, eTitle);
     }
     //------------------------------------------------8---------------------------------------------------------------//
 
@@ -175,10 +175,10 @@ public class CommonMethods extends BaseTest {
 
     /**
      * This method is used to enter the url
-     * @param URL url of the Application we are Accessing
+     * @param url url of the Application we are Accessing
      */
-    public void enter_URL(String URL) {
-        driver.get(URL);
+    public void enter_URL(String url) {
+        driver.get(url);
     }
     //------------------------------------------------11--------------------------------------------------------------//
 
@@ -223,7 +223,7 @@ public class CommonMethods extends BaseTest {
            findElement(by,value).click();
            reporter.log(Status.PASS,"Clicked on: "+eleName);
        }catch (Exception e){
-           reporter.log(Status.FAIL,"FAIL: "+eleName+" is not appeared even after the time out");
+           reporter.error("Unable to perform Click operation on the element the isERROR :" + e.getMessage().split("\n")[0].trim());
            Assert.fail();
        }
     }
@@ -242,7 +242,7 @@ public class CommonMethods extends BaseTest {
            action.moveToElement(ele).click().perform();
            reporter.log(Status.PASS,"Clicked on: "+eleName);
        }catch (Exception e) {
-           reporter.log(Status.FAIL, eleName + " is not appeared to click on the element");
+           reporter.error("Unable to perform Click operation on the element the isERROR :" + e.getMessage().split("\n")[0].trim());
            Assert.fail();
        }
     }
@@ -260,7 +260,7 @@ public class CommonMethods extends BaseTest {
             reporter.log(Status.PASS,"Clicked on: "+eleName);
         }
         catch (Exception e){
-            reporter.log(Status.FAIL,eleName+" is not appeared even after the time out");
+            reporter.error(eleName+" Element is not Visible even after the time out");
             Assert.fail();
         }
     }
@@ -294,10 +294,10 @@ public class CommonMethods extends BaseTest {
 
     /**
      * This Method is used to verify the URL of the WebPage
-     * @param expectedUrl is the URL that we are going to compare with the obtained URL
+     * @param expectedURL is the URL that we are going to compare with the obtained URL
      */
-    public void verifyURL(String expectedUrl){
-        new WebDriverWait(driver,ETO).until(ExpectedConditions.urlContains(expectedUrl));
+    public void verifyURL(String expectedURL){
+        new WebDriverWait(driver,ETO).until(ExpectedConditions.urlContains(expectedURL));
     }
     //------------------------------------------------19--------------------------------------------------------------//
 
@@ -305,12 +305,12 @@ public class CommonMethods extends BaseTest {
      * This Method is used to print the names of all the matching elements
      * @param by Element locator Type,
      * @param value Element locator Value,
-     * @param Text is the Message to be printed
+     * @param text is the Message to be printed
      */
-    public void countLinks(String by, String value, String Text){
+    public void countLinks(String by, String value, String text){
             List<WebElement> ele = findElements(by, value);
             int allLinks = ele.size();
-        reporter.log(Status.INFO,Text + allLinks);
+        reporter.log(Status.INFO,text + allLinks);
     }
     //------------------------------------------------20--------------------------------------------------------------//
 
@@ -344,12 +344,12 @@ public class CommonMethods extends BaseTest {
      * This Method is used to Select any Element in the list Box by sending Text as input.
      * @param by Element locator Type,
      * @param value Element locator Value,
-     * @param Text Select Element based on Text.
+     * @param text Select Element based on Text.
      */
-    public void selectByText(String by,String value,String Text){
+    public void selectByText(String by,String value,String text){
         WebElement ele = findElement(by, value);
         Select select=new Select(ele);
-        select.selectByVisibleText(Text);
+        select.selectByVisibleText(text);
     }
     //------------------------------------------------23--------------------------------------------------------------//
 
@@ -417,23 +417,23 @@ public class CommonMethods extends BaseTest {
      *This Method is used to check no links present in the WebPage and print all the links.
      * @param by Element locator Type,
      * @param value Element locator Value,
-     * @param Text is the Text message that will print in the report,
+     * @param elementName is the Text message that will print in the report,
      * @return text.
      */
-    public String printContent(String by, String value,String Text){
+    public String printContent(String by, String value,String elementName){
         String text="";
         try {
             List<WebElement> ele = findElements(by, value);
             int allLinks = ele.size();
-            reporter.log(Status.INFO,"Total no of "+Text+" : " + allLinks);
-            reporter.log(Status.INFO,Text+" names are as follows: ");
+            reporter.log(Status.INFO,"Total no of "+elementName+" : " + allLinks);
+            reporter.log(Status.INFO,elementName+" names are as follows: ");
             for (int i = 0; i < allLinks; i++) {
                 WebElement link = ele.get(i);
                 text = link.getText();
                 reporter.log(Status.INFO,i + 1 + ": " + text);
             }
         }catch (Exception e){
-            reporter.log(Status.FAIL,"No "+Text+"'s are present in side the Element");
+            reporter.log(Status.FAIL,"No "+elementName+"'s are present in side the Element");
         }
         return text;
     }
@@ -482,11 +482,11 @@ public class CommonMethods extends BaseTest {
      * @param by Element locator Type,
      * @param value Element locator Value.
      */
-    public void frameByName(String by, String value,String Name){
+    public void frameByName(String by, String value,String name){
         List<WebElement> frames = findElements(by, value);
         int frameSize = frames.size();
         reporter.log(Status.PASS,"Total no of frames in the list are : "+frameSize);
-        driver.switchTo().frame(Name);
+        driver.switchTo().frame(name);
     }
     //------------------------------------------------31--------------------------------------------------------------//
 
@@ -496,11 +496,11 @@ public class CommonMethods extends BaseTest {
      * @param by Element locator Type,
      * @param value Element locator Value.
      */
-    public void frameByText(String by, String value,String ID){
+    public void frameByText(String by, String value,String id){
         List<WebElement> frames = findElements(by, value);
         int frameSize = frames.size();
         reporter.log(Status.PASS,"Total no of frames in the list are : "+frameSize);
-        driver.switchTo().frame(ID);
+        driver.switchTo().frame(id);
     }
     //------------------------------------------------32--------------------------------------------------------------//
 
@@ -509,10 +509,8 @@ public class CommonMethods extends BaseTest {
      * Compares the Actual Result with the Expected Result.
      * @param by Element locator Type,
      * @param value Element locator Value,
-     * @param expValue expected Result that is compared with the Actual Result
      */
-    public  void isEnabled(String by, String value, String expValue){
-
+    public  void isEnabled(String by, String value){
         WebElement ele = findElement(by, value);
         try {
             if (ele.isEnabled()) {
@@ -573,17 +571,37 @@ public class CommonMethods extends BaseTest {
         try {
             WebElement ele = findElement(by, value);
             try {
-                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", ele);
+                jse.executeScript("arguments[0].scrollIntoView(true);", ele);
                 reporter.info(name + " is available and is scrolled into view.");
             } catch (Exception e) {
                 reporter.error(name + " is not available and cannot be scrolled into view. Error: " + e);
                 throw e;
             }
-            click(by, value, name);
+            ele.click();
         } catch (Exception e) {
             reporter.error("Unable to perform Click operation on the element " + name.trim() + "ERROR :" + e.getMessage().split("\n")[0].trim());
             Assert.fail();
         }
     }
     //------------------------------------------------36--------------------------------------------------------------//
+
+    /**
+     * This Method is used to click on the Child Element passing from the parent Element.
+     * @param parBy parent Element locator Type,
+     * @param parValue parent Element locator Value,
+     * @param childBy Child Element locator Type,
+     * @param childValue Child Element locator Value,
+     */
+    public void clickChild(String parBy, String parValue,String childBy, String childValue){
+        try {
+            //WebElement parEle = findElement(parBy, parValue);
+            //WebElement childEle = parEle.findElement(childBy, childValue);
+            //childEle.click();
+            reporter.log(Status.PASS,"Clicked on element : ");
+
+        }catch (Exception e){
+            reporter.error("Unable to perform Click operation on the element the isERROR :" + e.getMessage().split("\n")[0].trim());
+        }
+    }
+    //------------------------------------------------37--------------------------------------------------------------//
 }

@@ -19,44 +19,44 @@ public abstract class BaseTest implements AutomationConstants{
     private static ExtentReports extent;
     private static final long ITO =50;
 
-    @Parameters({"Platform","TargetDriver"})
+    @Parameters({"platform","targetDriver"})
     @BeforeSuite
-    public WebDriver open_Browser(String Platform, String TargetDriver){
+    public WebDriver open_Browser(String platform, String targetDriver){
 
-        if(Platform.equalsIgnoreCase("Windows")){
+        if(platform.equalsIgnoreCase("Windows")){
 
-            if(TargetDriver.equalsIgnoreCase("Chrome")){
+            if(targetDriver.equalsIgnoreCase("Chrome")){
                 System.setProperty(CHROME_KEY,CHROME_WIN_VALUE);
                 driver = new ChromeDriver();
             }
-            else if(TargetDriver.equalsIgnoreCase("FireFox")) {
+            else if(targetDriver.equalsIgnoreCase("FireFox")) {
                 System.setProperty(GECKO_KEY, GECKO_VALUE);
                 driver = new FirefoxDriver();
             }
-            else if (TargetDriver.equalsIgnoreCase("IE")){
+            else if (targetDriver.equalsIgnoreCase("IE")){
                 System.setProperty(IE_KEY,IE_VALUE);
                 driver=new InternetExplorerDriver();
             }
         }
-        else if (Platform.equalsIgnoreCase("Mac")){
+        else if (platform.equalsIgnoreCase("Mac")){
 
-            if(TargetDriver.equalsIgnoreCase("Chrome")){
+            if(targetDriver.equalsIgnoreCase("Chrome")){
                 System.setProperty(CHROME_KEY,CHROME_MAC_VALUE);
                 driver = new ChromeDriver();
             }
-            else if (TargetDriver.equalsIgnoreCase("Safari")){
+            else if (targetDriver.equalsIgnoreCase("Safari")){
                 System.setProperty(SAFARI_KEY,SAFARI_VALUE);
                 driver = new SafariDriver();
             }
-            else if(TargetDriver.equalsIgnoreCase("FireFox")) {
+            else if(targetDriver.equalsIgnoreCase("FireFox")) {
                 System.setProperty(GECKO_KEY, GECKO_MAC_VALUE);
                 driver = new FirefoxDriver();
             }
         }
 
-        driver.manage().window().maximize();
-        driver.manage().deleteAllCookies();
-        driver.manage().timeouts().implicitlyWait(ITO,TimeUnit.SECONDS);
+        //driver.manage().window().maximize();
+        //driver.manage().deleteAllCookies();
+        //driver.manage().timeouts().implicitlyWait(ITO,TimeUnit.SECONDS);
 
         return driver;
     }
