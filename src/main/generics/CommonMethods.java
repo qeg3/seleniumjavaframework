@@ -359,7 +359,6 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @throws Exception Handling Exception
      */
-
     public void fileUPLoad(String by,String value) throws Exception{
         findElement(by,value).click();
         Robot rb=new Robot();
@@ -592,16 +591,22 @@ public class CommonMethods extends BaseTest {
      * @param childBy Child Element locator Type,
      * @param childValue Child Element locator Value,
      */
-    public void clickChild(String parBy, String parValue,String childBy, String childValue){
+    public Object getChild(String parBy, String parValue,String childBy, String childValue){
+        WebElement getEle=null;
         try {
-            //WebElement parEle = findElement(parBy, parValue);
-            //WebElement childEle = parEle.findElement(childBy, childValue);
-            //childEle.click();
-            reporter.log(Status.PASS,"Clicked on element : ");
-
+            List<WebElement> parEle = findElements(parBy, parValue);
+            int eleSize = parEle.size();
+            for(int i=0;i<=eleSize;i++) {
+                 getEle = parEle.get(i);
+                WebElement chiEle = findElement(childBy, childValue);
+                if(getEle.equals(chiEle)){
+                    break;
+                }
+            }
         }catch (Exception e){
-            reporter.error("Unable to perform Click operation on the element the isERROR :" + e.getMessage().split("\n")[0].trim());
+            reporter.error("Unable to Match the element with the Expected Element and the ERROR :" + e.getMessage().split("\n")[0].trim());
         }
+        return getEle;
     }
     //------------------------------------------------37--------------------------------------------------------------//
 }
