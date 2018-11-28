@@ -16,8 +16,8 @@ public abstract class BaseTest implements AutomationConstants{
     public static WebDriver driver;
     private static ExtentHtmlReporter report;
     public static ExtentTest reporter;
-    private static ExtentReports extent;
-    private static final long ITO =50;
+    private static ExtentReports file;
+    public static final long ITO =50;
 
     @Parameters({"platform","targetDriver"})
     @BeforeSuite
@@ -54,46 +54,44 @@ public abstract class BaseTest implements AutomationConstants{
             }
         }
 
-        //driver.manage().window().maximize();
-        //driver.manage().deleteAllCookies();
+        driver.manage().window().maximize();
+        driver.manage().deleteAllCookies();
         //driver.manage().timeouts().implicitlyWait(ITO,TimeUnit.SECONDS);
 
         return driver;
     }
 
     @BeforeClass
-    public void initalizeGlobalvariables(){
+    public void initializeGlobalVariables(){
 
     }
 
     @BeforeTest
     public void configReports(){
         report = new ExtentHtmlReporter(System.getProperty("user.dir")+REPORTS_PATH);
-        extent=new ExtentReports();
-        extent.setSystemInfo("Environment","Environment");
-        extent.setSystemInfo("OS","OS");
-        extent.setSystemInfo("Browser","browsername");
-        extent.setSystemInfo("URL","URL of project");
-        extent.setSystemInfo("Host Name"," ");
+        file=new ExtentReports();
+        file.setSystemInfo("Environment","Prod");
+        file.setSystemInfo("OS","Windows");
+        file.setSystemInfo("Browser","Chrome");
+        file.setSystemInfo("URL","https://ToolsQA.com");
+        file.setSystemInfo("Host Name"," ");
 
-        report.config().setDocumentTitle("OfsSeleniumJava_Report");
-        report.config().setReportName("OfsSeleniumJava_Report ");
+        report.config().setDocumentTitle("OFS Selenium");
+        report.config().setReportName("OFS Selenium ");
 
-        extent.attachReporter(report);
-
+        file.attachReporter(report);
     }
 
     @BeforeMethod
     public void startTest(Method method){
-        //String testName=method.getName();
-
-
+        String testName=method.getName();
+        reporter=file.createTest(testName);
+        driver.manage().timeouts().implicitlyWait(ITO,TimeUnit.SECONDS);
     }
 
     @AfterMethod
     public void endTest(Method method){
         //String testName=method.getName();
-
     }
 
     @AfterSuite
