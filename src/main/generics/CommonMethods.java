@@ -1,6 +1,6 @@
 package main.generics;
 
-import com.aventstack.extentreports.Status;
+import com.relevantcodes.extentreports.LogStatus;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.openqa.selenium.*;
@@ -10,7 +10,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Reporter;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -23,8 +22,6 @@ import java.util.concurrent.TimeUnit;
 public class CommonMethods extends BaseTest {
 
     //------------------------------------------------1---------------------------------------------------------------//
-
-    public static WebElement element;
     private static final long ETO =50;
     public Actions action = new Actions(driver);
     public JavascriptExecutor jse=(JavascriptExecutor)driver;
@@ -57,6 +54,7 @@ public class CommonMethods extends BaseTest {
      * @return element.
      */
     public WebElement findElement(String by,String value){
+        WebElement element=null;
         switch (by) {
             case "id":
                 element = driver.findElement(By.id(value));
@@ -95,7 +93,6 @@ public class CommonMethods extends BaseTest {
      * @return element.
      */
     public static List<WebElement> findElements(String by, String value) {
-
         List<WebElement> element=null;
         switch (by) {
             case "id":
@@ -135,7 +132,7 @@ public class CommonMethods extends BaseTest {
         try {
             Thread.sleep(time * 1000);
         }catch (final InterruptedException e){
-            e.printStackTrace();
+            reporter.log(LogStatus.ERROR,"The Entered time format is incorrect");
         }
         return time;
     }
@@ -147,11 +144,13 @@ public class CommonMethods extends BaseTest {
      * @param eTitle is expected title which we r going to pass and it is compared with the actual title.
      */
     public void verifyTitle(String eTitle){
+        String aTitle = driver.getTitle();
         try {
-            String aTitle = driver.getTitle();
             Assert.assertEquals(aTitle, eTitle);
+            reporter.log(LogStatus.PASS,"Page: "+aTitle+" is Verified");
         }catch (Exception e){
-            e.printStackTrace();
+            reporter.log(LogStatus.ERROR,"Actual Title is NOT Matching with the Expected Title  Actual Title is: "+aTitle+" and Expected Title is: "+eTitle);
+            Assert.fail(e.getMessage().split("\n")[0].trim());
         }
     }
     //------------------------------------------------8---------------------------------------------------------------//
@@ -162,15 +161,15 @@ public class CommonMethods extends BaseTest {
      */
     public static void verifyTitleContain(String eTitle) {
         try{
-            new WebDriverWait(driver,ETO).until(ExpectedConditions.titleContains(eTitle));
+                new WebDriverWait(driver,ETO).until(ExpectedConditions.titleContains(eTitle));
                 String aTitle=driver.getTitle();
-                reporter.log(Status.PASS,"Page: "+aTitle+" is Verified");
+                Assert.assertEquals(aTitle, eTitle);
+                reporter.log(LogStatus.PASS,"Page: "+aTitle+" is Verified");
             }
             catch(Exception e){
-                e.printStackTrace();
                 String aTitle=driver.getTitle();
-                reporter.log(Status.FAIL,"Actual Title is NOT Matching with the Expected Title  Actual Title is: "+aTitle+" and Expected Title is: "+eTitle);
-                Assert.fail();
+                reporter.log(LogStatus.ERROR,"Actual Title is NOT Matching with the Expected Title  Actual Title is: "+aTitle+" and Expected Title is: "+eTitle);
+                Assert.fail(e.getMessage().split("\n")[0].trim());
             }
         }
     //-------------------------------------------------9--------------------------------------------------------------//
@@ -180,7 +179,9 @@ public class CommonMethods extends BaseTest {
      * @return the Url of the page on which we are working on
      */
     public String getCurrentUrl() {
-            return (driver.getCurrentUrl());
+        String url = driver.getCurrentUrl();
+        reporter.log(LogStatus.INFO,"the URL of the web page is : "+url);
+            return (url);
         }
     //------------------------------------------------10--------------------------------------------------------------//
 
@@ -190,6 +191,7 @@ public class CommonMethods extends BaseTest {
      */
     public void enter_URL(String url) {
         driver.get(url);
+        reporter.log(LogStatus.INFO,"The Entered URL is : "+url);
     }
     //------------------------------------------------11--------------------------------------------------------------//
 
@@ -204,11 +206,10 @@ public class CommonMethods extends BaseTest {
         TakesScreenshot page = (TakesScreenshot) driver;
         try {
             FileUtils.copyFile(page.getScreenshotAs(OutputType.FILE), new File(imagePath));
-            reporter.log(Status.INFO,"The ScreenShot is: "+getFormattedDateTime());
+            reporter.log(LogStatus.INFO,"The ScreenShot is: "+getFormattedDateTime());
         }
         catch (Exception e) {
-            reporter.log(Status.INFO,"An Error occurred while taking ScreenShot");
-            Assert.fail();
+            reporter.log(LogStatus.INFO,"An Error occurred while taking ScreenShot Because of : "+e.getMessage().split("\n")[0].trim());
         }
         return imagePath;
     }
@@ -219,7 +220,6 @@ public class CommonMethods extends BaseTest {
      * @param time is the Implicit Waiting time to find the Element
      */
     public void implicitWait(long time){
-
         driver.manage().timeouts().implicitlyWait(time,TimeUnit.SECONDS);
     }
     //------------------------------------------------13--------------------------------------------------------------//
@@ -232,10 +232,9 @@ public class CommonMethods extends BaseTest {
     public void click(String by, String value, String eleName){
        try{
            findElement(by,value).click();
-           //reporter.log(Status.PASS,"Clicked on: "+eleName);
+           reporter.log(LogStatus.PASS,"Clicked on: "+eleName);
        }catch (Exception e){
-           //reporter.error("Unable to perform Click operation on the element the isERROR :" + e.getMessage().split("\n")[0].trim());
-           Assert.fail();
+           reporter.log(LogStatus.ERROR,"Unable to perform Click operation on the element the isERROR :" + e.getMessage().split("\n")[0].trim());
        }
     }
     //------------------------------------------------14--------------------------------------------------------------//
@@ -247,14 +246,12 @@ public class CommonMethods extends BaseTest {
      * @param eleName is the name of the element on which Click Action to be performed
      */
     public void clickByActions(String by, String value, String eleName){
-
        try{
            WebElement ele=findElement(by,value);
            action.moveToElement(ele).click().perform();
-           reporter.log(Status.PASS,"Clicked on: "+eleName);
+           reporter.log(LogStatus.PASS,"Clicked on: "+eleName);
        }catch (Exception e) {
-           reporter.error("Unable to perform Click operation on the element the isERROR :" + e.getMessage().split("\n")[0].trim());
-           Assert.fail();
+           reporter.log(LogStatus.ERROR,"Unable to perform Click operation on the element the ERROR is :" + e.getMessage().split("\n")[0].trim());
        }
     }
     //------------------------------------------------15--------------------------------------------------------------//
@@ -268,11 +265,10 @@ public class CommonMethods extends BaseTest {
         WebDriverWait wait=new WebDriverWait(driver,ETO);
         try{
             wait.until(ExpectedConditions.visibilityOf(findElement(by,value)));
-            //reporter.log(Status.PASS,"Clicked on: "+eleName);
+            reporter.log(LogStatus.PASS,"Clicked on: "+eleName);
         }
         catch (Exception e){
-            //reporter.error(eleName+" Element is not Visible even after the time out because of : "+e);
-            Assert.fail();
+            reporter.log(LogStatus.ERROR,eleName+" Element is not Visible even after the time out and the Error is : "+e.getMessage().split("\n")[0].trim());
         }
     }
     //------------------------------------------------16--------------------------------------------------------------//
@@ -288,10 +284,9 @@ public class CommonMethods extends BaseTest {
             WebElement ele = findElement(by, value);
             ele.clear();
             ele.sendKeys(data);
-            //reporter.log(Status.PASS,data+" : Entered in to the Text Field");
+            reporter.log(LogStatus.PASS,data+" : Entered in to the Text Field");
         }catch (Exception e){
-            e.printStackTrace();
-            //reporter.fail(data+" : failed to enter in to the Text Field Because of :"+e);
+            reporter.log(LogStatus.ERROR,data+" : failed to enter in to the Text Field and the Error is : "+e.getMessage().split("\n")[0].trim());
         }
     }
     //------------------------------------------------17--------------------------------------------------------------//
@@ -303,8 +298,13 @@ public class CommonMethods extends BaseTest {
      * @return text present in the locator
      */
     public String getText(String by, String value){
-        String text = findElement(by, value).getText();
-        //reporter.log(Status.INFO,text);
+        String text ="";
+        try {
+            text = findElement(by, value).getText();
+            reporter.log(LogStatus.INFO,text);
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Failed to get Text present in the Element and the Error is : "+e.getMessage().split("\n")[0].trim());
+        }
         return text;
     }
     //------------------------------------------------18--------------------------------------------------------------//
@@ -314,7 +314,15 @@ public class CommonMethods extends BaseTest {
      * @param expectedURL is the URL that we are going to compare with the obtained URL
      */
     public void verifyURL(String expectedURL){
-        new WebDriverWait(driver,ETO).until(ExpectedConditions.urlContains(expectedURL));
+        try {
+            new WebDriverWait(driver,ETO).until(ExpectedConditions.urlContains(expectedURL));
+            String currentUrl = driver.getCurrentUrl();
+            Assert.assertEquals(currentUrl, expectedURL);
+            reporter.log(LogStatus.PASS,"Pass actualTitle is matching with the expectedTitle");
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Fail actualTitle is not matching with the expectedTitle");
+            Assert.fail(e.getMessage().split("\n")[0].trim());
+        }
     }
     //------------------------------------------------19--------------------------------------------------------------//
 
@@ -322,12 +330,15 @@ public class CommonMethods extends BaseTest {
      * This Method is used to print the names of all the matching elements
      * @param by Element locator Type,
      * @param value Element locator Value,
-     * @param text is the Message to be printed
      */
-    public void countLinks(String by, String value, String text){
+    public void countLinks(String by, String value){
+        try{
             List<WebElement> ele = findElements(by, value);
             int allLinks = ele.size();
-        //reporter.log(Status.INFO,text + allLinks);
+            reporter.log(LogStatus.INFO,"Total no of links in the Web page are : " + allLinks);
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Unable to count to count total no of links present and the Error is : "+e.getMessage().split("\n")[0].trim());
+        }
     }
     //------------------------------------------------20--------------------------------------------------------------//
 
@@ -338,8 +349,13 @@ public class CommonMethods extends BaseTest {
      * @param index Select Element based on Index.
      */
     public void selectByIndex(String by,String value,int index){
-        Select select=new Select(findElement(by, value));
-        select.selectByIndex(index);
+        try {
+            Select select=new Select(findElement(by, value));
+            select.selectByIndex(index);
+            reporter.log(LogStatus.PASS,"Element is selected with the given Index");
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Failed to select the Element with the given Index and the ERROR is : "+e.getMessage().split("\n")[0].trim());
+        }
     }
     //------------------------------------------------21--------------------------------------------------------------//
 
@@ -350,8 +366,13 @@ public class CommonMethods extends BaseTest {
      * @param expValue Select Element based on Value.
      */
     public void selectByValue(String by,String value,String expValue){
-        Select select=new Select(findElement(by, value));
-        select.selectByValue(expValue);
+        try{
+            Select select=new Select(findElement(by, value));
+            select.selectByValue(expValue);
+            reporter.log(LogStatus.PASS,"Element is selected with the given Value");
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Failed to select the Element with the given Value and the ERROR is : "+e.getMessage().split("\n")[0].trim());
+        }
     }
     //------------------------------------------------22--------------------------------------------------------------//
 
@@ -362,8 +383,13 @@ public class CommonMethods extends BaseTest {
      * @param text Select Element based on Text.
      */
     public void selectByText(String by,String value,String text){
-        Select select=new Select(findElement(by, value));
-        select.selectByVisibleText(text);
+        try{
+            Select select=new Select(findElement(by, value));
+            select.selectByVisibleText(text);
+            reporter.log(LogStatus.PASS,"Element is selected with the given Text");
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Failed to select the Element with the given Text and the ERROR is : "+e.getMessage().split("\n")[0].trim());
+        }
     }
     //------------------------------------------------23--------------------------------------------------------------//
 
@@ -374,25 +400,30 @@ public class CommonMethods extends BaseTest {
      * @throws Exception Handling Exception
      */
     public void fileUPLoad(String by,String value) throws Exception{
-        findElement(by,value).click();
-        Robot rb=new Robot();
-        // Press Enter
-        rb.keyPress(KeyEvent.VK_ENTER);
+        try{
+            findElement(by,value).click();
+            Robot rb=new Robot();
+            // Press Enter
+            rb.keyPress(KeyEvent.VK_ENTER);
 
-        // Release Enter
-        rb.keyRelease(KeyEvent.VK_ENTER);
+            // Release Enter
+            rb.keyRelease(KeyEvent.VK_ENTER);
 
-        // Press CTRL+V
-        rb.keyPress(KeyEvent.VK_CONTROL);
-        rb.keyPress(KeyEvent.VK_V);
+            // Press CTRL+V
+            rb.keyPress(KeyEvent.VK_CONTROL);
+            rb.keyPress(KeyEvent.VK_V);
 
-        // Release CTRL+V
-        rb.keyRelease(KeyEvent.VK_CONTROL);
-        rb.keyRelease(KeyEvent.VK_V);
+            // Release CTRL+V
+            rb.keyRelease(KeyEvent.VK_CONTROL);
+            rb.keyRelease(KeyEvent.VK_V);
 
-        //Press Enter
-        rb.keyPress(KeyEvent.VK_ENTER);
-        rb.keyRelease(KeyEvent.VK_ENTER);
+            //Press Enter
+            rb.keyPress(KeyEvent.VK_ENTER);
+            rb.keyRelease(KeyEvent.VK_ENTER);
+            reporter.log(LogStatus.PASS,"The fail got uploaded into the path Successfully");
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Failed to upLoad file in to the path and the ERROR is : "+e.getMessage().split("\n")[0].trim());
+        }
     }
     //------------------------------------------------24--------------------------------------------------------------//
 
@@ -404,27 +435,16 @@ public class CommonMethods extends BaseTest {
      * @param val2 Element2 locator Value.
      */
     public void dragAndDrop(String by1,String val1,String by2,String val2){
-        WebElement ele1 = findElement(by1, val1);
-        WebElement ele2 = findElement(by2, val2);
-        action.dragAndDrop(ele1,ele2).build().perform();
+        try{
+            WebElement ele1 = findElement(by1, val1);
+            WebElement ele2 = findElement(by2, val2);
+            action.dragAndDrop(ele1,ele2).build().perform();
+            reporter.log(LogStatus.PASS,"The two Elements got Swapped Successfully");
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Failed to swap the Two Elements and the ERROR is : "+e.getMessage().split("\n")[0].trim());
+        }
     }
     //------------------------------------------------25--------------------------------------------------------------//
-
-    /**
-     * This Method is used to move the mouse to the Menu item and click on the sub Element.
-     * @param by Element locator Type,
-     * @param value Element locator Value,
-     * @param subBy SubElement locator Type,
-     * @param subValue SubElement locator Value,
-     */
-    public void clickMenuSubElement(String by,String value,String subBy,String subValue) throws InterruptedException{
-        WebElement ele =findElement(by,value);
-        action.moveToElement(ele).build().perform();
-        sleep(5);
-        WebElement subEle = findElement(subBy,subValue);
-        subEle.click();
-    }
-    //------------------------------------------------26--------------------------------------------------------------//
 
     /**
      *This Method is used to check no links present in the WebPage and print all the links.
@@ -438,33 +458,37 @@ public class CommonMethods extends BaseTest {
         try {
             List<WebElement> ele = findElements(by, value);
             int allLinks = ele.size();
-            //reporter.log(Status.INFO,"Total no of "+elementName+" : " + allLinks);
-            //reporter.log(Status.INFO,elementName+" names are as follows: ");
+            reporter.log(LogStatus.INFO,"Total no of "+elementName+" : " + allLinks);
+            reporter.log(LogStatus.INFO,elementName+" names are as follows: ");
             for (int i = 0; i < allLinks; i++) {
                 WebElement link = ele.get(i);
                 text = link.getText();
-                //reporter.log(Status.INFO,i + 1 + ": " + text);
+                reporter.log(LogStatus.INFO,i + 1 + ": " + text);
             }
         }catch (Exception e){
-            //reporter.log(Status.FAIL,"No "+elementName+"'s are present in side the Element");
+            reporter.log(LogStatus.ERROR,"No "+elementName+"'s are present in side the Element"+e.getMessage().split("\n")[0].trim());
         }
         return text;
     }
-    //------------------------------------------------27--------------------------------------------------------------//
+    //------------------------------------------------26--------------------------------------------------------------//
 
     /**
      * This Method is used to Highlight any WebElement On Demand.
      * @param by Element locator Type,
      * @param value Element locator Value,
      */
-    public void highLighterMethod(String by,String value){
-        WebElement ele = findElement(by, value);
-        jse.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", ele);
-        String text = ele.getText();
-        //reporter.log(Status.PASS,text+" : is Highlighted");
-        Reporter.log(text+" : is Highlighted",true);
+    public void highLightMethod(String by,String value){
+        try{
+            WebElement ele = findElement(by, value);
+            jse.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", ele);
+            String text = ele.getText();
+            reporter.log(LogStatus.PASS,text+" : is Highlighted");
+            Reporter.log(text+" : is Highlighted",true);
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Failed to Highlight the Method and the ERROR is : "+e.getMessage().split("\n")[0].trim());
+        }
     }
-    //------------------------------------------------28--------------------------------------------------------------//
+    //------------------------------------------------27--------------------------------------------------------------//
 
     /**
      * This Method is used is used to Count the total no of frames present inside the Web page.
@@ -472,11 +496,15 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value.
      */
     public void countFrames(String by, String value){
-        List<WebElement> frames = findElements(by, value);
-        int frameSize = frames.size();
-        //reporter.log(Status.PASS,"Total no of frames in the list are : "+frameSize);
+        try{
+            List<WebElement> frames = findElements(by, value);
+            int frameSize = frames.size();
+            reporter.log(LogStatus.PASS,"Total no of frames in the Web Page are : "+frameSize);
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Failed to count the total no of FRAMES in the WebPage and the ERROR is : "+e.getMessage().split("\n")[0].trim());
+        }
     }
-    //------------------------------------------------29--------------------------------------------------------------//
+    //------------------------------------------------28--------------------------------------------------------------//
 
     /**
      * This Method is used is used to Count the total no of frames present inside the Web page and
@@ -485,13 +513,17 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value.
      */
     public void frameByIndex(String by, String value,int index){
-        List<WebElement> frames = findElements(by, value);
-        int frameSize = frames.size();
-        frames.get(index).click();
-        //reporter.log(Status.PASS,"Total no of frames in the list are : "+frameSize);
-        driver.switchTo().frame(index);
+        try{
+            List<WebElement> frames = findElements(by, value);
+            int frameSize = frames.size();
+            frames.get(index).click();
+            driver.switchTo().frame(index);
+            reporter.log(LogStatus.PASS," Frame is Selected");
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Failed to select the FRAME by the given Index and the ERROR is : "+e.getMessage().split("\n")[0].trim());
+        }
     }
-    //------------------------------------------------30--------------------------------------------------------------//
+    //------------------------------------------------29--------------------------------------------------------------//
 
     /**
      * This Method is used is used to Count the total no of frames present inside the Web page and
@@ -500,12 +532,16 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value.
      */
     public void frameByName(String by, String value,String name){
-        List<WebElement> frames = findElements(by, value);
-        int frameSize = frames.size();
-        //reporter.log(Status.PASS,"Total no of frames in the list are : "+frameSize);
-        driver.switchTo().frame(name);
+        try{
+            List<WebElement> frames = findElements(by, value);
+            int frameSize = frames.size();
+            driver.switchTo().frame(name);
+            reporter.log(LogStatus.PASS,name+" Frame is Selected");
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Failed to select the FRAME by the given Name and the ERROR is : "+e.getMessage().split("\n")[0].trim());
+        }
     }
-    //------------------------------------------------31--------------------------------------------------------------//
+    //------------------------------------------------30--------------------------------------------------------------//
 
     /**
      * This Method is used is used to Count the total no of frames present inside the Web page and
@@ -514,12 +550,16 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value.
      */
     public void frameByText(String by, String value,String id){
-        List<WebElement> frames = findElements(by, value);
-        int frameSize = frames.size();
-        //reporter.log(Status.PASS,"Total no of frames in the list are : "+frameSize);
-        driver.switchTo().frame(id);
+        try {
+            List<WebElement> frames = findElements(by, value);
+            //int frameSize = frames.size();
+            driver.switchTo().frame(id);
+            reporter.log(LogStatus.PASS," Frame is Selected");
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Failed to select the FRAME by the given ID and the ERROR is : "+ e.getMessage().split("\n")[0].trim());
+        }
     }
-    //------------------------------------------------32--------------------------------------------------------------//
+    //------------------------------------------------31--------------------------------------------------------------//
 
     /**
      * This Method will check weather the given Element is Enabled or Disabled and
@@ -528,18 +568,18 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      */
     public  void isEnabled(String by, String value){
-        WebElement ele = findElement(by, value);
         try {
+            WebElement ele = findElement(by, value);
             if (ele.isEnabled()) {
-                //reporter.log(Status.PASS, "The Element is Enabled");
+                reporter.log(LogStatus.PASS, "The Element is Enabled");
             } else {
-                //reporter.fail("The Element is Disabled");
+                reporter.log(LogStatus.FAIL,"The Element is Disabled");
             }
         }catch (Exception e){
-            Assert.fail();
+            reporter.log(LogStatus.ERROR,"Unable to find the Element is enabled or disabled element with the given locator and the ERROR is : "+e.getMessage().split("\n")[0].trim());
         }
     }
-    //------------------------------------------------33--------------------------------------------------------------//
+    //------------------------------------------------32--------------------------------------------------------------//
 
     /**
      *  This Method is used to establish Connection with the DataBase and Execute the Query
@@ -551,13 +591,17 @@ public class CommonMethods extends BaseTest {
      * @throws Exception handling Exceptions
      */
     public void dbSQLQuery(String dbUrl,String username,String password,String sqlQuery) throws Exception {
-        Class.forName(SQL_DRIVER);
-        Connection con = DriverManager.getConnection(dbUrl, username, password);
-        Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery(sqlQuery);
-        //reporter.info("Sql query "+sqlQuery+" output is : "+rs);
+        try {
+            Class.forName(SQL_DRIVER);
+            Connection con = DriverManager.getConnection(dbUrl, username, password);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sqlQuery);
+            reporter.log(LogStatus.INFO,"Sql query " + sqlQuery + " output is : " + rs);
+        }catch (Exception e){
+             reporter.log(LogStatus.ERROR,"Unable to execute the Query and the ERROR is :"+e.getMessage().split("\n")[0].trim());
+        }
     }
-    //------------------------------------------------34--------------------------------------------------------------//
+    //------------------------------------------------33--------------------------------------------------------------//
 
     /**
      *  This Method is used to establish Connection with the DataBase and Execute the Query
@@ -566,16 +610,19 @@ public class CommonMethods extends BaseTest {
      * @param username DateBase login UserName,
      * @param password DataBase Login Password,
      * @param query The Executable Query to Execute.
-     * @throws Exception handling Exceptions
      */
-    public void dbOracleQuery(String dbUrl,String username,String password,String query) throws Exception{
-        Class.forName(ORACLE_DRIVER);
-        Connection con = DriverManager.getConnection(dbUrl, username, password);
-        Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
-        //reporter.info("Oracle query "+query+" output is : "+rs);
+    public void dbOracleQuery(String dbUrl,String username,String password,String query) {
+        try {
+            Class.forName(ORACLE_DRIVER);
+            Connection con = DriverManager.getConnection(dbUrl, username, password);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            reporter.log(LogStatus.INFO,"Oracle query "+query+" output is : "+rs);
+        }catch (Exception e){
+            reporter.log(LogStatus.ERROR,"Unable to execute the Query and the ERROR is :"+e.getMessage().split("\n")[0].trim());
+        }
     }
-    //------------------------------------------------45--------------------------------------------------------------//
+    //------------------------------------------------34--------------------------------------------------------------//
 
     /**
      * This method is used to scroll the web page to desired location and click on the Element.
@@ -584,23 +631,21 @@ public class CommonMethods extends BaseTest {
      * @param name Element name;
      */
     public void clickElementByScrollPage(String by, String value, String name) {
-
         try {
             WebElement ele = findElement(by, value);
             try {
                 jse.executeScript("arguments[0].scrollIntoView(true);", ele);
-                //reporter.info(name + " is available and is scrolled into view.");
+                reporter.log(LogStatus.INFO,name + " is available and is scrolled into view.");
             } catch (Exception e) {
-                //reporter.error(name + " is not available and cannot be scrolled into view. Error: " + e);
+                reporter.log(LogStatus.ERROR,name + " is not available and cannot be scrolled into view. Error: " + e);
                 throw e;
             }
             ele.click();
         } catch (Exception e) {
-            //reporter.error("Unable to perform Click operation on the element " + name.trim() + "ERROR :" + e.getMessage().split("\n")[0].trim());
-            Assert.fail();
+            reporter.log(LogStatus.ERROR,"Unable to perform Click operation on the element " + name.trim() + "ERROR :" + e.getMessage().split("\n")[0].trim());
         }
     }
-    //------------------------------------------------36--------------------------------------------------------------//
+    //------------------------------------------------35--------------------------------------------------------------//
 
     /**
      * This Method is used to click on the Child Element passing from the parent Element.
@@ -616,15 +661,17 @@ public class CommonMethods extends BaseTest {
             int eleSize = parEle.size();
             for(int i=0;i<=eleSize;i++) {
                  getEle = parEle.get(i);
+                String text = getEle.getText();
                 WebElement chiEle = findElement(childBy, childValue);
                 if(getEle.equals(chiEle)){
                     break;
                 }
+                reporter.log(LogStatus.PASS,"Element "+text+" : is Selected");
             }
         }catch (Exception e){
-            //reporter.error("Unable to Match the element with the Expected Element and the ERROR :" + e.getMessage().split("\n")[0].trim());
+            reporter.log(LogStatus.ERROR,"Unable to Match the actualElement with the expectedElement and the ERROR :" + e.getMessage().split("\n")[0].trim());
         }
         return getEle;
     }
-    //------------------------------------------------37--------------------------------------------------------------//
+    //------------------------------------------------36--------------------------------------------------------------//
 }

@@ -1,5 +1,6 @@
 package main.generics;
 
+import com.relevantcodes.extentreports.LogStatus;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
@@ -13,19 +14,19 @@ public class Listners extends BaseTest implements ITestListener {
     @Override
     public void onTestStart(ITestResult result) {
         String testName = result.getName();
-        reporter.info(testName+" : has Started Exicution");
+        reporter.log(LogStatus.INFO,testName+" : has Started Exicution");
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
         String testName = result.getName();
-        reporter.pass(testName+" : has Successfully Exicuted");
+        reporter.log(LogStatus.PASS,testName+" : has Successfully Exicuted");
     }
 
     @Override
     public void onTestFailure(ITestResult result)  {
         String testName = result.getName();
-        reporter.fail(testName+" : has Failed to Execute Because of : "+result.getThrowable());
+        reporter.log(LogStatus.PASS,testName+" : has Failed to Execute Because of : "+result.getThrowable());
         try {
             Robot r = new Robot();
             Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -33,17 +34,17 @@ public class Listners extends BaseTest implements ITestListener {
             BufferedImage img = r.createScreenCapture(screenRect);
             String now = CommonMethods.getFormattedDateTime();
             ImageIO.write(img, "png", new File(PHOTO_PATH + testName + now + ".png"));
-            reporter.info("The " + testName + " has Failed and the Screenshot is : " + PHOTO_PATH + testName + now + ".png");
+            reporter.log(LogStatus.PASS,"The " + testName + " has Failed and the Screenshot is : " + PHOTO_PATH + testName + now + ".png");
         }catch (Exception e){
 
-            reporter.error("Error Occurred while taking Screenshot");
+            reporter.log(LogStatus.ERROR,"Error Occurred while taking Screenshot");
         }
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
         String testName = result.getName();
-        reporter.skip(testName+" : has got Skipped from the Execution Because of : "+result.getThrowable());
+        reporter.log(LogStatus.SKIP,testName+" : has got Skipped from the Execution Because of : "+result.getThrowable());
     }
 
     @Override

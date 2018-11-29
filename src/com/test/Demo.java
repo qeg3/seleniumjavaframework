@@ -1,6 +1,5 @@
 package com.test;
 
-import com.aventstack.extentreports.Status;
 import main.generics.BaseTest;
 import main.generics.CommonMethods;
 import org.testng.Reporter;

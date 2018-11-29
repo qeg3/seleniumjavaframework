@@ -1,22 +1,22 @@
 package main.generics;
 
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.testng.annotations.*;
+
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BaseTest implements AutomationConstants{
     public static WebDriver driver;
-    private static ExtentHtmlReporter report;
+    public static ExtentReports report;
     public static ExtentTest reporter;
-    private static ExtentReports file;
     public static final long ITO =50;
 
     @Parameters({"platform","targetDriver"})
@@ -56,7 +56,7 @@ public abstract class BaseTest implements AutomationConstants{
 
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
-        //driver.manage().timeouts().implicitlyWait(ITO,TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(ITO,TimeUnit.SECONDS);
 
         return driver;
     }
@@ -68,30 +68,23 @@ public abstract class BaseTest implements AutomationConstants{
 
     @BeforeTest
     public void configReports(){
-        report = new ExtentHtmlReporter(System.getProperty("user.dir")+REPORTS_PATH);
-        file=new ExtentReports();
-        file.setSystemInfo("Environment","Prod");
-        file.setSystemInfo("OS","Windows");
-        file.setSystemInfo("Browser","Chrome");
-        file.setSystemInfo("URL","https://ToolsQA.com");
-        file.setSystemInfo("Host Name"," ");
-
-        report.config().setDocumentTitle("OFS Selenium");
-        report.config().setReportName("OFS Selenium ");
-
-        file.attachReporter(report);
+        report = new ExtentReports (System.getProperty("user.dir") +REPORTS_PATH, true);
+        report.addSystemInfo("Host Name", "OFS Selenium Framework")
+                .addSystemInfo("Environment", "prod")
+                .addSystemInfo("User Name", "");
+        report.loadConfig(new File(System.getProperty("user.dir")+"\\extent-config.xml"));
     }
 
     @BeforeMethod
     public void startTest(Method method){
         String testName=method.getName();
-        reporter=file.createTest(testName);
-        driver.manage().timeouts().implicitlyWait(ITO,TimeUnit.SECONDS);
+        reporter=report.startTest(testName);
     }
 
     @AfterMethod
     public void endTest(Method method){
-        //String testName=method.getName();
+        String testName=method.getName();
+        report.endTest(reporter);
     }
 
     @AfterSuite
