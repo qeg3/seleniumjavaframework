@@ -69,10 +69,10 @@ public abstract class BaseTest implements AutomationConstants{
     @BeforeTest
     public void configReports(){
         report = new ExtentReports (System.getProperty("user.dir") +REPORTS_PATH, true);
-        report.addSystemInfo("Host Name", "OFS Selenium Framework")
+        report.addSystemInfo("Host Name", "")
                 .addSystemInfo("Environment", "prod")
                 .addSystemInfo("User Name", "");
-        report.loadConfig(new File(System.getProperty("user.dir")+"\\extent-config.xml"));
+        report.loadConfig(new File(System.getProperty("user.dir")+REPORTS_CONFIG));
     }
 
     @BeforeMethod
