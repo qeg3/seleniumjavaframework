@@ -17,7 +17,7 @@ public abstract class BaseTest implements AutomationConstants{
     public static WebDriver driver;
     public static ExtentReports report;
     public static ExtentTest reporter;
-    public static final long ITO =50;
+    public static final long ITO =10;
 
     @Parameters({"platform","targetDriver"})
     @BeforeSuite

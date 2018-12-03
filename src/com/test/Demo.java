@@ -5,10 +5,10 @@ import main.generics.CommonMethods;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
-public class Demo extends CommonMethods {
+public class Demo extends BaseTest {
     @Test
     public void test()throws NullPointerException,InterruptedException{
-        /*CommonMethods cm=new CommonMethods();
+        CommonMethods cm=new CommonMethods();
         cm.enter_URL("https://online.actitime.com/areddy");
         cm.verifyTitleContain("actiTIME - Login");
         cm.sendKeys("id","username","amarreddypull","UserName");
@@ -22,13 +22,11 @@ public class Demo extends CommonMethods {
         cm.sendKeys("name","//*[@id='editDescriptionPopupText']","bhlicuglifgIL","Comment");
         cm.click("xpath","//*[@id='scbutton']","ok");
         cm.sleep(5);
-        cm.click("className","cursorImageLink","ele");
-         Reporter.log(data,true);*/
-
+        cm.click("className","cursorImageLink","SignIn Link");
 
         //cm.selectByText("id","ext-gen155","- New Customer -");
       //reporter.log(Status.PASS,"nmvcsmhgc");
-        enter_URL("https://online.actitime.com/areddy");
+
 
 
 
