@@ -4,26 +4,26 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WebDriver;
 
 public class utilities {
 
         //Method to read the data from excel test data sheet and write that into a hash map
-        public static Map<String,  Map<String, List<String>>> readExcelData() throws IOException {
+        public static Map<String,  Map<String, List<String>>> readExcelData(String path) throws IOException {
 
             Map<String, Map<String, List<String>>> excelFileMap = null;
             try {
-                String path = "/Users/vijayaraghavan/seleniumjavaframework/src/main/resources/sample.xlsx";
+
                 FileInputStream fis = new FileInputStream(path);
                 Workbook workbook = new XSSFWorkbook(fis);
                 Sheet sheet = workbook.getSheetAt(0);
-
+                String key;
 
                 int columnCount = sheet.getRow(0).getLastCellNum();
                 int rowCount = sheet.getLastRowNum();
@@ -32,28 +32,24 @@ public class utilities {
 
                 Map<String, List<String>> dataMap = new HashMap<String, List<String>>();
 
-
-                String key;
-
                 Row keyRow = sheet.getRow(0);
 
                 //Looping over all the columns and get each cell data
-                for (int i = 0; i < columnCount; i++) {
+                for (int i = 0; i < columnCount; i++)
+                {
                     Cell keyCell = keyRow.getCell(i);
                     key = keyCell.getStringCellValue().trim();
                     List<String> valueSet = new ArrayList<String>();
-                    for (int j = 1; j <= rowCount; j++) {
-
+                    for (int j = 1; j <= rowCount; j++)
+                    {
                         Row valRow = sheet.getRow(j);
                         Cell valueCell = valRow.getCell(i);
                         String value = valueCell.getStringCellValue().trim();
                         valueSet.add(value);
                     }
-
                     //Putting key & value in dataMap
                     dataMap.put(key, valueSet);
                     excelFileMap.put("DataSheet", dataMap);
-
                 }
 
 
@@ -64,23 +60,49 @@ public class utilities {
                 throw(e);
             }
 
-
             //Returning excelFileMap
             return excelFileMap;
         }
 
         //Method to retrieve value based on the key
-        public static List<String> getExcelData(String key) throws IOException{
+        public static List<String> getExcelData(Map<String, Map<String, List<String>>> m, String key) throws IOException
+        {
 
-            Map<String, List<String>> m = readExcelData().get("DataSheet");
-            List<String> value = m.get(key);
+            //Map<String, List<String>> m = readExcelData(path).get("DataSheet");
+            Map<String, List<String>> n = m.get("DataSheet");
+            List<String> value = n.get(key);
 
             return value;
-
         }
 
+    //Method to retrieve the Locator Value and Locator Type based on the Element to set the application Objects
+    public static WebElement getExcelDataOR(Map<String, Map<String, List<String>>> m, String key) throws IOException{
 
+        Map<String, List<String>> n = m.get("DataSheet");
+        //String ObjRepoMetadata[];
 
+        String ObjRepoMetadata[] = new String[100];
+
+        List<String> Element = n.get("Element");
+        List<String> LocatorType = n.get("LocatorType");
+        List<String> LocatorValue = n.get("LocatorValue");
+
+        for(int i=0;i<Element.size();i++)
+        {
+
+            if (Element.get(i).equalsIgnoreCase(key))
+            {
+                ObjRepoMetadata[0] = LocatorType.get(i);
+                ObjRepoMetadata[1] = LocatorValue.get(i);
+                break;
+            }
+        }
+
+        WebElement element = CommonMethods.findElement(ObjRepoMetadata[0],ObjRepoMetadata[1]);
+
+        return element;
+
+    }
 
 }
 
