@@ -1,50 +1,54 @@
 package main.generics;
 
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.safari.SafariDriver;
-import org.testng.ITestResult;
 import org.testng.annotations.*;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BaseTest implements AutomationConstants{
     public static WebDriver driver;
-    public static ExtentHtmlReporter report;
+    public static ExtentReports report;
     public static ExtentTest reporter;
-    public static ExtentReports extent;
+    public static final long ITO =10;
 
-    @Parameters({"platform","browser"})
+    @Parameters({"platform","targetDriver"})
     @BeforeSuite
-    public WebDriver open_Browser(String platform, String browser){
+    public WebDriver open_Browser(String platform, String targetDriver){
 
         if(platform.equalsIgnoreCase("Windows")){
 
-            if(browser.equalsIgnoreCase("Chrome")){
+            if(targetDriver.equalsIgnoreCase("Chrome")){
                 System.setProperty(CHROME_KEY,CHROME_WIN_VALUE);
                 driver = new ChromeDriver();
             }
-            else if(browser.equalsIgnoreCase("FireFox")) {
+            else if(targetDriver.equalsIgnoreCase("FireFox")) {
                 System.setProperty(GECKO_KEY, GECKO_VALUE);
                 driver = new FirefoxDriver();
+            }
+            else if (targetDriver.equalsIgnoreCase("IE")){
+                System.setProperty(IE_KEY,IE_VALUE);
+                driver=new InternetExplorerDriver();
             }
         }
         else if (platform.equalsIgnoreCase("Mac")){
 
-            if(browser.equalsIgnoreCase("Chrome")){
+            if(targetDriver.equalsIgnoreCase("Chrome")){
                 System.setProperty(CHROME_KEY,CHROME_MAC_VALUE);
                 driver = new ChromeDriver();
             }
-            else if (browser.equalsIgnoreCase("Safari")){
+            else if (targetDriver.equalsIgnoreCase("Safari")){
                 System.setProperty(SAFARI_KEY,SAFARI_VALUE);
                 driver = new SafariDriver();
             }
-            else if(browser.equalsIgnoreCase("FireFox")) {
+            else if(targetDriver.equalsIgnoreCase("FireFox")) {
                 System.setProperty(GECKO_KEY, GECKO_MAC_VALUE);
                 driver = new FirefoxDriver();
             }
@@ -52,50 +56,42 @@ public abstract class BaseTest implements AutomationConstants{
 
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
-        driver.manage().timeouts().implicitlyWait(30,TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(ITO,TimeUnit.SECONDS);
 
         return driver;
     }
 
     @BeforeClass
-    public void initalizeGlobalvariables(){
+    public void initializeGlobalVariables(){
 
     }
 
     @BeforeTest
     public void configReports(){
-        report = new ExtentHtmlReporter(System.getProperty("user.dir")+REPORTS_PATH);
-        extent=new ExtentReports();
-        extent.setSystemInfo("Environment","Environment");
-        extent.setSystemInfo("OS","OS");
-        extent.setSystemInfo("Browser","browsername");
-        extent.setSystemInfo("URL","URL of project");
-        extent.setSystemInfo("Host Name"," ");
-
-        report.config().setDocumentTitle("OfsSeleniumJava_Report");
-        report.config().setReportName("OfsSeleniumJava_Report ");
-
-        extent.attachReporter(report);
-
+        report = new ExtentReports (System.getProperty("user.dir") +REPORTS_PATH, true);
+        report.addSystemInfo("Host Name", "")
+                .addSystemInfo("Environment", "prod")
+                .addSystemInfo("User Name", "");
+        report.loadConfig(new File(System.getProperty("user.dir")+REPORTS_CONFIG));
     }
 
     @BeforeMethod
     public void startTest(Method method){
         String testName=method.getName();
-
-
+        reporter=report.startTest(testName);
     }
 
     @AfterMethod
     public void endTest(Method method){
         String testName=method.getName();
-
+        report.endTest(reporter);
     }
 
     @AfterSuite
     public void tearDown() {
         driver.close();
         driver.quit();
+
         report.flush();
 
     }

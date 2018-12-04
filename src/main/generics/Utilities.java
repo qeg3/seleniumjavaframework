@@ -12,7 +12,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WebDriver;
 
-public class utilities {
+public class Utilities {
 
         //Method to read the data from excel test data sheet and write that into a hash map
         public static Map<String,  Map<String, List<String>>> readExcelData(String path) throws IOException {
