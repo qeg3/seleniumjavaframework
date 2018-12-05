@@ -23,7 +23,7 @@ public class DemoPositive extends BaseTest {
         String url1 = method.getCurrentUrl();
         method.verifyURL(url1);
         method.highLightElement("className","addTasksButton","addTasksButton");
-        method.getScreenShot(PHOTO_PATH);
+        method.getScreenShot();
         method.isEnabled("className","taskSearchField","SearchBox");
         method.clickByActions("className","dashedLink","NewTask");
         method.sleep(5);
