@@ -2,6 +2,7 @@ package main.generics;
 
 import com.relevantcodes.extentreports.LogStatus;
 import org.apache.commons.io.FileUtils;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -9,9 +10,13 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Reporter;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class CommonMethods extends BaseTest {
 
     //------------------------------------------------1---------------------------------------------------------------//
-    private static final long ETO =50;
+    private static final long ETO =10;
     public Actions action = new Actions(driver);
     public JavascriptExecutor jse=(JavascriptExecutor)driver;
     //------------------------------------------------2---------------------------------------------------------------//
@@ -196,23 +201,37 @@ public class CommonMethods extends BaseTest {
     //------------------------------------------------11--------------------------------------------------------------//
 
     /**
-     * This Method is used to get multiple screenshots and store the screenshots in the location or
-     * folder in the ".png" format
-     * @param imageFolderPath we need to specify the folder path in which we need to store all our screenshots
-     * @return imagePath.
+     * This Method is used to get screenshots and store the screenshot in the project directory
+     * @return finalImgPath - Returns the Screenshot folder location.
      */
-    public String getScreenShot(String imageFolderPath) {
-        String imagePath=imageFolderPath+"/"+getFormattedDateTime()+".png";
-        TakesScreenshot page = (TakesScreenshot) driver;
+    public static String getScreenShot() {
+        String dateName = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
+        TakesScreenshot ts = (TakesScreenshot) driver;
+        String finalImgPath = null;
+
         try {
-            FileUtils.copyFile(page.getScreenshotAs(OutputType.FILE), new File(imagePath));
-            reporter.log(LogStatus.INFO,"The ScreenShot is: "+getFormattedDateTime());
+            File source = ts.getScreenshotAs(OutputType.FILE);
+
+            //after execution, you could see a folder "FailedTestsScreenshots" under src folder
+            finalImgPath = System.getProperty("user.dir") +"/"+ PHOTO_PATH  +"/"+ dateName + ".png";
+            File finalDestination = new File(finalImgPath);
+            FileUtils.copyFile(source, finalDestination);
+            //Getting the Parent Directory
+            File dirName = new File(System.getProperty("user.dir"));
+            String folderName = dirName.getName();
+            folderName = "/"+folderName;
+            int index = finalImgPath.indexOf(folderName);
+            String screenshotPath = finalImgPath.substring(index);
+            Path absolutePath = Paths.get(finalImgPath);
+            Path relativePath = Paths.get(screenshotPath);
+            Path finalPath = absolutePath.relativize(relativePath);
+            finalImgPath = finalPath.toString();
         }
-        catch (Exception e) {
+        catch (Exception e){
             reporter.log(LogStatus.INFO,"An Error occurred while taking ScreenShot Because of : "+e.getMessage().split("\n")[0].trim());
             Assert.fail();
         }
-        return imagePath;
+        return finalImgPath;
     }
     //-----------------------------------------------12---------------------------------------------------------------//
 
@@ -236,8 +255,9 @@ public class CommonMethods extends BaseTest {
            findElement(by,value).click();
            reporter.log(LogStatus.PASS,"Clicked on: "+eleName);
        }catch (Exception e){
-           reporter.log(LogStatus.ERROR,"Failed to perform Click operation on the element the isERROR :" + e.getMessage().split("\n")[0].trim());
-           Assert.fail();
+           reporter.log(LogStatus.ERROR,"Failed to perform Click operation on "+eleName+" and the Error is : " + getErrorMessage(e));
+
+           //Assert.fail();
        }
     }
     //------------------------------------------------14--------------------------------------------------------------//
@@ -254,7 +274,7 @@ public class CommonMethods extends BaseTest {
            action.moveToElement(ele).click().perform();
            reporter.log(LogStatus.PASS,"Clicked on: "+eleName);
        }catch (Exception e) {
-           reporter.log(LogStatus.ERROR,"Failed to perform Click operation on "+eleName+" and the ERROR is :" + e.getMessage().split("\n")[0].trim());
+           reporter.log(LogStatus.ERROR,"Failed to perform Click operation on "+eleName+" and the ERROR is : " + e.getMessage().split("\n")[0].trim());
            Assert.fail();
        }
     }
@@ -292,7 +312,9 @@ public class CommonMethods extends BaseTest {
             ele.sendKeys(data);
             reporter.log(LogStatus.PASS,data+" : Entered in the "+eleName+" Text Field");
         }catch (Exception e){
-            reporter.log(LogStatus.ERROR,"Failed to enter "+data+" in the "+eleName+" Text Field and the Error is : "+e.getMessage().split("\n")[0].trim());
+            //We do pass the path captured by this mehtod in to the extent reports using "logger.addScreenCapture" method.
+            String screenshotPath = getScreenShot();
+            reporter.log(LogStatus.ERROR,"Failed to enter "+data+" in the "+eleName+" Text Field and the Error is : "+e.getMessage().split("\n")[0].trim(),reporter.addScreenCapture(screenshotPath));
             Assert.fail();
         }
     }
@@ -347,7 +369,7 @@ public class CommonMethods extends BaseTest {
             allLinks = ele.size();
             reporter.log(LogStatus.INFO,"Total no of links present in the "+webPage+" are : " + allLinks);
         }catch (Exception e){
-            reporter.log(LogStatus.ERROR,"Unable to count to count total no of links present in the "+webPage+" and the Error is : "+e.getMessage().split("\n")[0].trim());
+            reporter.log(LogStatus.ERROR,"Unable to count the total no of links present in the "+webPage+" and the Error is : "+e.getMessage().split("\n")[0].trim());
             Assert.fail();
         }
         return allLinks;
@@ -729,4 +751,11 @@ public class CommonMethods extends BaseTest {
         }
     }
     //------------------------------------------------37--------------------------------------------------------------//
+
+    public String getErrorMessage(Exception e){
+        String error=null;
+        String[] message = e.getMessage().split(":");
+        error= message[0].trim()+" : "+ message[1].trim()+" - Element info : "+ message[message.length - 1].trim();
+        return error;
+    }
 }
