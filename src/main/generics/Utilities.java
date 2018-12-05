@@ -1,7 +1,11 @@
 package main.generics;
 
+import com.relevantcodes.extentreports.LogStatus;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -11,8 +15,9 @@ import java.util.ArrayList;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Assert;
 
-public class Utilities {
+public class Utilities extends BaseTest{
 
         //Method to read the data from excel test data sheet and write that into a hash map
         public static Map<String,  Map<String, List<String>>> readExcelData() throws IOException {
@@ -71,7 +76,39 @@ public class Utilities {
 
         }
 
+    //----------------------------------------------------------------------------------------------------------------//
 
+    public static String getCellData_OBR_PC(String path,String sheet,String key,String columnName) {
+        String CellData = "";
+        int ColumnNum = 1;
+        if(columnName.equalsIgnoreCase("Locator Type"))
+            ColumnNum = 1;
+        else if (columnName.equalsIgnoreCase("Locator Value"))
+            ColumnNum = 2;
+        else if (columnName.equalsIgnoreCase("Value"))
+            ColumnNum = 1;
+
+        try {
+            FileInputStream fis = new FileInputStream( new File(path));
+            Workbook wb = new HSSFWorkbook(fis);
+            Sheet sheet1 = wb.getSheet(sheet);
+
+            int rowCount=sheet1.getLastRowNum();
+            for(int row=1;row<=rowCount+1;row++) {
+                String RowData =  sheet1.getRow(row).getCell(0).toString();
+                if (RowData.trim().equalsIgnoreCase(key)) {
+                    CellData = sheet1.getRow(row).getCell(ColumnNum).toString();
+                    break;
+                }
+            }
+
+        } catch (Exception e) {
+            reporter.log(LogStatus.ERROR,"Data Failed to fetch, Please check the Excel Sheet Method Parameters");
+            Assert.fail();
+        }
+        return CellData;
+    }
+    //----------------------------------------------------------------------------------------------------------------//
 
 
 }

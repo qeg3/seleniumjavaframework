@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-public class Listners extends BaseTest implements ITestListener {
+public class Listeners extends BaseTest implements ITestListener {
 
     @Override
     public void onTestStart(ITestResult result) {
@@ -26,7 +26,7 @@ public class Listners extends BaseTest implements ITestListener {
     @Override
     public void onTestFailure(ITestResult result)  {
         String testName = result.getName();
-        reporter.log(LogStatus.PASS,testName+" : has Failed to Execute Because of : "+result.getThrowable());
+        reporter.log(LogStatus.FAIL,testName+" : has Failed to Execute Because of : "+result.getThrowable());
         try {
             Robot r = new Robot();
             Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -34,7 +34,7 @@ public class Listners extends BaseTest implements ITestListener {
             BufferedImage img = r.createScreenCapture(screenRect);
             String now = CommonMethods.getFormattedDateTime();
             ImageIO.write(img, "png", new File(PHOTO_PATH + testName + now + ".png"));
-            reporter.log(LogStatus.PASS,"The " + testName + " has Failed and the Screenshot is : " + PHOTO_PATH + testName + now + ".png");
+            reporter.log(LogStatus.FAIL,"The " + testName + " has Failed and the Screenshot is : " + PHOTO_PATH + testName + now + ".png");
         }catch (Exception e){
 
             reporter.log(LogStatus.ERROR,"Error Occurred while taking Screenshot");

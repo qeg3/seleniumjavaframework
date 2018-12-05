@@ -143,6 +143,7 @@ public class CommonMethods extends BaseTest {
     public  int sleep(int time){
         try {
             Thread.sleep(time * 1000);
+            reporter.log(LogStatus.INFO,"Waiting for :"+time+" Before Performing next action");
         }catch (final InterruptedException e){
             reporter.log(LogStatus.ERROR,"The Entered time format is incorrect"+getErrorMessage(e));
             Assert.fail();
@@ -160,9 +161,9 @@ public class CommonMethods extends BaseTest {
         String aTitle = driver.getTitle();
         try {
             Assert.assertEquals(aTitle, eTitle);
-            reporter.log(LogStatus.PASS,"Pass : "+aTitle+" is matching with the : "+eTitle);
+            reporter.log(LogStatus.PASS," ActualTitle : "+aTitle+" is matching with the ExpectedTitle: "+eTitle);
         }catch (Exception e){
-            reporter.log(LogStatus.ERROR,"Pass : "+aTitle+" is not matching with the : "+eTitle+" and the ERROR is : "+getErrorMessage(e));
+            reporter.log(LogStatus.ERROR," ActualTitle : "+aTitle+" is not matching with the ExpectedTitle : "+eTitle+" and the ERROR is : "+getErrorMessage(e));
             Assert.fail();
         }
     }
@@ -178,10 +179,10 @@ public class CommonMethods extends BaseTest {
         String aTitle=driver.getTitle();
         try{
                 Assert.assertEquals(aTitle, eTitle);
-                reporter.log(LogStatus.PASS,"Pass : "+aTitle+" is matching with the : "+eTitle);
+                reporter.log(LogStatus.PASS," ActualTitle : "+aTitle+" is matching with the ExpectedTitle: "+eTitle);
             }
             catch(Exception e){
-                reporter.log(LogStatus.ERROR,"Pass : "+aTitle+" is not matching with the : "+eTitle+" and the ERROR is : "+getErrorMessage(e));
+                reporter.log(LogStatus.ERROR," ActualTitle : "+aTitle+" is not matching with the ExpectedTitle : "+eTitle+" and the ERROR is : "+getErrorMessage(e));
                 Assert.fail();
             }
         }
@@ -202,7 +203,7 @@ public class CommonMethods extends BaseTest {
      * This method is used to enter the url
      * @param url url of the Application we are Accessing
      */
-    public void enter_URL(String url) {
+    public static void enter_URL(String url) {
         driver.get(url);
         reporter.log(LogStatus.INFO,"The Entered URL is : "+url);
     }
@@ -219,7 +220,7 @@ public class CommonMethods extends BaseTest {
         TakesScreenshot page = (TakesScreenshot) driver;
         try {
             FileUtils.copyFile(page.getScreenshotAs(OutputType.FILE), new File(imagePath));
-            reporter.log(LogStatus.INFO,"The ScreenShot is: "+getFormattedDateTime());
+            reporter.log(LogStatus.INFO,"The ScreenShot is : "+imagePath);
         }
         catch (Exception e) {
             reporter.log(LogStatus.INFO,"An Error occurred while taking ScreenShot Because of : "+getErrorMessage(e));
@@ -233,8 +234,9 @@ public class CommonMethods extends BaseTest {
      *This method is used synchronization of FindElement and FindElements
      * @param time is the Implicit Waiting time to find the Element
      */
-    public void implicitWait(long time){
+    public static void implicitWait(long time){
         driver.manage().timeouts().implicitlyWait(time,TimeUnit.SECONDS);
+        reporter.log(LogStatus.INFO,"Implicit time is set to : "+time+" Seconds");
     }
     //------------------------------------------------14--------------------------------------------------------------//
 
@@ -281,8 +283,8 @@ public class CommonMethods extends BaseTest {
     public void visibilityOfElement(String by, String value,String eleName){
         WebDriverWait wait=new WebDriverWait(driver,ETO);
         try{
-            wait.until(ExpectedConditions.visibilityOf(findElement(by,value)));
-            reporter.log(LogStatus.PASS,"Pass "+eleName+" Element is present");
+            wait.until(ExpectedConditions.visibilityOf(findElement(by, value)));
+            reporter.log(LogStatus.PASS,eleName+" is Visible");
         }
         catch (Exception e){
             reporter.log(LogStatus.ERROR,eleName+" Element is not Visible even after the time out and the Error is : "+getErrorMessage(e));
@@ -340,9 +342,9 @@ public class CommonMethods extends BaseTest {
         String currentUrl = driver.getCurrentUrl();
         try {
             Assert.assertEquals(currentUrl.contains(expectedURL),true);
-            reporter.log(LogStatus.PASS,"Pass "+currentUrl+" is matching with the "+expectedURL);
+            reporter.log(LogStatus.PASS,"ActualURL : "+currentUrl+" is matching with the ExpectedURL : "+expectedURL);
         }catch (Exception e){
-            reporter.log(LogStatus.ERROR,"Pass "+currentUrl+" is not matching with the "+expectedURL+" and the ERROR is : "+getErrorMessage(e));
+            reporter.log(LogStatus.ERROR,"ActualURL : "+currentUrl+" is not matching with the ExpectedURL : "+expectedURL+" and the ERROR is : "+getErrorMessage(e));
             Assert.fail();
         }
     }
@@ -509,7 +511,7 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @param eleName is the Text message that will print in the report.
      */
-    public void highLightMethod(String by,String value,String eleName){
+    public void highLightElement(String by,String value,String eleName){
         try{
             WebElement ele = findElement(by, value);
             jse.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", ele);
@@ -742,4 +744,24 @@ public class CommonMethods extends BaseTest {
         }
     }
     //------------------------------------------------38--------------------------------------------------------------//
+
+    /**
+     * This Method is used to handle unexpected popups.
+     */
+    public static void handleAlert() {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                while(true) {
+                    try {
+                        driver.switchTo().alert().accept();
+                        reporter.log(LogStatus.PASS,"UnExpected PopUp Occurred and closed ");
+                    }catch(NoAlertPresentException n){
+                    }catch (Exception e) {
+                        reporter.log(LogStatus.ERROR,"Failed to Handle the UnExpected Popup and The Error is : ");
+                    }
+                }
+            }
+        });
+    }
+    //------------------------------------------------39--------------------------------------------------------------//
 }
