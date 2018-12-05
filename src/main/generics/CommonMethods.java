@@ -546,7 +546,8 @@ public class CommonMethods extends BaseTest {
         try{
             WebElement ele = findElement(by, value);
             jse.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", ele);
-            reporter.log(LogStatus.PASS,eleName+" : is Highlighted");
+            String screenshotPath = getScreenShot();
+            reporter.log(LogStatus.PASS,eleName+" : is Highlighted"+reporter.addScreenCapture(screenshotPath));
         }catch (Exception e){
             reporter.log(LogStatus.ERROR,"Failed to Highlight "+eleName+" and the ERROR is : "+getErrorMessage(e));
             Assert.fail();
