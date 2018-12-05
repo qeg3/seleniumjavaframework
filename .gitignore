@@ -3,5 +3,7 @@
 *.png
 *.jar
 /target
-/Reports
-
+/Reports/*.html
+/Screenshots
+*.html
+/target/*
