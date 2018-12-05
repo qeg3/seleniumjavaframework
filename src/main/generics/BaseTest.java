@@ -54,8 +54,8 @@ public abstract class BaseTest implements AutomationConstants{
                 System.setProperty(GECKO_KEY, GECKO_MAC_VALUE);
                 driver = new FirefoxDriver();
             }
+            driver.manage().window().fullscreen();
         }
-
         driver.manage().deleteAllCookies();
         return driver;
     }

@@ -6,15 +6,12 @@
 
     <groupId>Ofsqeg</groupId>
     <artifactId>Ofsseleniumjava</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
 
     <build>
-
         <sourceDirectory>src</sourceDirectory>
-
         <plugins>
-
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.0.0</version>
@@ -33,6 +30,12 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.20.1</version>
+                <configuration>
+                    <!-- Suite testng xml file to consider for test execution -->
+                    <suiteXmlFiles>
+                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -144,6 +147,12 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sonarsource.scanner.maven</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>3.5.0.1254</version>
         </dependency>
 
     </dependencies>

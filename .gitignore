@@ -1,2 +1,7 @@
 *.xml
 *.iml
+*.png
+*.jar
+/target
+/Reports
+/Screenshots
