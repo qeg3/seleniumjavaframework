@@ -240,13 +240,10 @@ public class CommonMethods extends BaseTest {
             Path finalPath = absolutePath.relativize(relativePath);
             finalImgPath = finalPath.toString();
         }
-<<<<<<< HEAD
+
         catch (Exception e){
             reporter.log(LogStatus.INFO,"An Error occurred while taking ScreenShot Because of : "+e.getMessage().split("\n")[0].trim());
-=======
-        catch (Exception e) {
-            reporter.log(LogStatus.INFO,"An Error occurred while taking ScreenShot Because of : "+getErrorMessage(e));
->>>>>>> c221b134b8038bb08318ba0258c1316ad3765522
+
             Assert.fail();
         }
         return finalImgPath;
@@ -273,14 +270,9 @@ public class CommonMethods extends BaseTest {
            findElement(by,value).click();
            reporter.log(LogStatus.PASS,"Clicked on: "+eleName);
        }catch (Exception e){
-<<<<<<< HEAD
            reporter.log(LogStatus.ERROR,"Failed to perform Click operation on "+eleName+" and the Error is : " + getErrorMessage(e));
 
            //Assert.fail();
-=======
-           reporter.log(LogStatus.ERROR,"Failed to perform Click operation on "+eleName+" and the element the ERROR is : " + getErrorMessage(e));
-           Assert.fail();
->>>>>>> c221b134b8038bb08318ba0258c1316ad3765522
        }
     }
     //------------------------------------------------15--------------------------------------------------------------//
@@ -297,11 +289,9 @@ public class CommonMethods extends BaseTest {
            action.moveToElement(ele).click().perform();
            reporter.log(LogStatus.PASS,"Clicked on: "+eleName);
        }catch (Exception e) {
-<<<<<<< HEAD
+
            reporter.log(LogStatus.ERROR,"Failed to perform Click operation on "+eleName+" and the ERROR is : " + e.getMessage().split("\n")[0].trim());
-=======
-           reporter.log(LogStatus.ERROR,"Failed to perform Click operation on "+eleName+" and the ERROR is : " +getErrorMessage(e));
->>>>>>> c221b134b8038bb08318ba0258c1316ad3765522
+
            Assert.fail();
        }
     }
@@ -339,13 +329,10 @@ public class CommonMethods extends BaseTest {
             ele.sendKeys(data);
             reporter.log(LogStatus.PASS,data+" : Entered in the "+eleName+" Text Field");
         }catch (Exception e){
-<<<<<<< HEAD
+
             //We do pass the path captured by this mehtod in to the extent reports using "logger.addScreenCapture" method.
             String screenshotPath = getScreenShot();
             reporter.log(LogStatus.ERROR,"Failed to enter "+data+" in the "+eleName+" Text Field and the Error is : "+e.getMessage().split("\n")[0].trim(),reporter.addScreenCapture(screenshotPath));
-=======
-            reporter.log(LogStatus.ERROR,"Failed to enter "+data+" in the "+eleName+" Text Field and the Error is : "+getErrorMessage(e));
->>>>>>> c221b134b8038bb08318ba0258c1316ad3765522
             Assert.fail();
         }
     }
@@ -400,11 +387,9 @@ public class CommonMethods extends BaseTest {
             allLinks = ele.size();
             reporter.log(LogStatus.INFO,"Total no of links present in the "+webPage+" are : " + allLinks);
         }catch (Exception e){
-<<<<<<< HEAD
+
             reporter.log(LogStatus.ERROR,"Unable to count the total no of links present in the "+webPage+" and the Error is : "+e.getMessage().split("\n")[0].trim());
-=======
-            reporter.log(LogStatus.ERROR,"Unable to count to count total no of links present in the "+webPage+" and the Error is : "+getErrorMessage(e));
->>>>>>> c221b134b8038bb08318ba0258c1316ad3765522
+
             Assert.fail();
         }
         return allLinks;
@@ -785,16 +770,9 @@ public class CommonMethods extends BaseTest {
             Assert.fail();
         }
     }
-<<<<<<< HEAD
+
     //------------------------------------------------37--------------------------------------------------------------//
 
-    public String getErrorMessage(Exception e){
-        String error=null;
-        String[] message = e.getMessage().split(":");
-        error= message[0].trim()+" : "+ message[1].trim()+" - Element info : "+ message[message.length - 1].trim();
-        return error;
-    }
-=======
     //------------------------------------------------38--------------------------------------------------------------//
->>>>>>> c221b134b8038bb08318ba0258c1316ad3765522
+
 }

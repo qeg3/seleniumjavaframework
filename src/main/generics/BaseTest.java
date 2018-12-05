@@ -37,6 +37,7 @@ public abstract class BaseTest implements AutomationConstants{
                 System.setProperty(IE_KEY,IE_VALUE);
                 driver=new InternetExplorerDriver();
             }
+            driver.manage().window().maximize();
         }
         else if (platform.equalsIgnoreCase("Mac")){
 
@@ -52,9 +53,10 @@ public abstract class BaseTest implements AutomationConstants{
                 System.setProperty(GECKO_KEY, GECKO_MAC_VALUE);
                 driver = new FirefoxDriver();
             }
+            driver.manage().window().fullscreen();
         }
 
-        driver.manage().window().maximize();
+
         driver.manage().deleteAllCookies();
         driver.manage().timeouts().implicitlyWait(ITO,TimeUnit.SECONDS);
 
