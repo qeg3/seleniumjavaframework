@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
-
+import main.generics.CommonMethods;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -97,8 +97,8 @@ public class Utilities {
                 break;
             }
         }
-
-        WebElement element = CommonMethods.findElement(ObjRepoMetadata[0],ObjRepoMetadata[1]);
+        CommonMethods com = new CommonMethods();
+         WebElement element = com.findElement(ObjRepoMetadata[0],ObjRepoMetadata[1]);
 
         return element;
 
