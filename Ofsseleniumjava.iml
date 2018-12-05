@@ -118,4 +118,8 @@
     <orderEntry type="library" name="Maven: org.sonarsource.scanner.api:sonar-scanner-api:2.10.0.1189" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
   </component>
+  <component name="sonarModuleSettings">
+    <option name="localAnalysisScripName" value="&lt;PROJECT&gt;" />
+    <option name="serverName" value="&lt;PROJECT&gt;" />
+  </component>
 </module>
