@@ -47,7 +47,8 @@ public class CommonMethods extends BaseTest {
     public String getErrorMessage(Exception e){
         String error=null;
         String[] message = e.getMessage().split(":");
-        error= message[0].trim()+" : "+ message[1].trim()+" - Element info : "+ message[message.length - 1].trim();
+        String screenshotPath = getScreenShot();
+        error= message[0].trim()+" : "+ message[1].trim()+" - Element info : "+ message[message.length - 1].trim()+reporter.addScreenCapture(screenshotPath);
         return error;
     }
     //-------------------------------------------------4--------------------------------------------------------------//
@@ -335,8 +336,7 @@ public class CommonMethods extends BaseTest {
         }catch (Exception e){
 
             //We do pass the path captured by this mehtod in to the extent reports using "logger.addScreenCapture" method.
-            String screenshotPath = getScreenShot();
-            reporter.log(LogStatus.ERROR,"Failed to enter "+data+" in the "+eleName+" Text Field and the Error is : "+e.getMessage().split("\n")[0].trim(),reporter.addScreenCapture(screenshotPath));
+            reporter.log(LogStatus.ERROR,"Failed to enter "+data+" in the "+eleName+" Text Field and the Error is : " +getErrorMessage(e));
             Assert.fail();
         }
     }
