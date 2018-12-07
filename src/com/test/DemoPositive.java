@@ -37,13 +37,13 @@ public class DemoPositive extends BaseTest {
         method.verifyTitle(loginPageTitle);
         String url = method.getCurrentUrl();
         method.verifyURL(url);
-        method.visibilityOfElement(loginUserNameBy,loginUserNameVal,"UserName Text Box");
+        method.visibilityOfElement(loginUserNameBy,loginUserNameVal,"UserNameTextBox");
         method.sendKeys(loginUserNameBy,loginUserNameVal,userName,"UserName");
         method.sendKeys(loginPasswordBy,loginPasswordVal,pasword,"Password");
         method.click(loginCheckBoxBy,loginCheckBoxVal,"ChBox");
         method.getText(loginBTNBy,loginBTNval,"loginBTN");
         method.click(loginBTNBy,loginBTNval,"loginBTN");
-        method.sleep(5);
+        method.sleep(10);
         method.verifyTitleContain(homePageTitle);
         String url1 = method.getCurrentUrl();
         method.verifyURL(url1);
