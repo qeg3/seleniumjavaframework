@@ -43,6 +43,7 @@ public class DemoPositive extends BaseTest {
         method.click(loginCheckBoxBy,loginCheckBoxVal,"ChBox");
         method.getText(loginBTNBy,loginBTNval,"loginBTN");
         method.click(loginBTNBy,loginBTNval,"loginBTN");
+        method.sleep(5);
         method.verifyTitleContain(homePageTitle);
         String url1 = method.getCurrentUrl();
         method.verifyURL(url1);
