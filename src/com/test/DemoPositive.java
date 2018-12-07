@@ -41,11 +41,11 @@ public class DemoPositive extends BaseTest {
         method.sendKeys(loginUserNameBy,loginUserNameVal,userName,"UserName");
         method.sendKeys(loginPasswordBy,loginPasswordVal,pasword,"Password");
         method.isEnabled(loginCheckBoxBy,loginCheckBoxVal,"ChBox");
+        method.clickElementByScrollPage(loginCheckBoxBy,loginCheckBoxVal,"ChBox");
         //method.click(loginCheckBoxBy,loginCheckBoxVal,"ChBox");
         method.getText(loginBTNBy,loginBTNval,"loginBTN");
-        method.isEnabled(loginBTNBy,loginBTNval,"ChBox");
-        method.click(loginBTNBy,loginBTNval,"loginBTN");
-        //method.sleep(10);
+        method.clickElementByScrollPage(loginBTNBy,loginBTNval,"loginBTN");
+        //method.click(loginBTNBy,loginBTNval,"loginBTN");
         method.verifyTitleContain(homePageTitle);
         String url1 = method.getCurrentUrl();
         method.verifyURL(url1);
