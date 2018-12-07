@@ -2,7 +2,6 @@ package main.generics;
 
 import com.relevantcodes.extentreports.LogStatus;
 import org.apache.commons.io.FileUtils;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -10,8 +9,6 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Reporter;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -19,6 +16,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -27,8 +26,8 @@ public class CommonMethods extends BaseTest {
 
     //------------------------------------------------1---------------------------------------------------------------//
     private static final long ETO =10;
-    public Actions action = new Actions(driver);
-    public JavascriptExecutor jse=(JavascriptExecutor)driver;
+    public static Actions action = new Actions(driver);
+    public static JavascriptExecutor jse=(JavascriptExecutor)driver;
     //------------------------------------------------2---------------------------------------------------------------//
 
     /**
@@ -44,11 +43,11 @@ public class CommonMethods extends BaseTest {
      * @param e is the object of the Exception,
      * @return error message text.
      */
-    public String getErrorMessage(Exception e){
+    public static String getErrorMessage(Exception e){
         String error=null;
         String[] message = e.getMessage().split(":");
-        String screenshotPath = getScreenShot();
-        error= message[0].trim()+" : "+ message[1].trim()+" - Element info : "+ message[message.length - 1].trim()+reporter.addScreenCapture(screenshotPath);
+        //String screenshotPath = getScreenShot();
+        error= message[0].trim()+" : "+ message[1].trim()+" - Element info : "+ message[message.length - 1].trim();//+reporter.addScreenCapture(screenshotPath);
         return error;
     }
     //-------------------------------------------------4--------------------------------------------------------------//
@@ -71,7 +70,7 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @return element.
      */
-    public WebElement findElement(String by,String value){
+    public static WebElement findElement(String by,String value){
         WebElement element=null;
         switch (by) {
             case "id":
@@ -146,10 +145,9 @@ public class CommonMethods extends BaseTest {
      * This method is used to specify the Waiting Condition.
      * @param time is the condition to wait for no of seconds before it go for next step
      */
-    public  int sleep(int time){
+    public int sleep(int time){
         try {
             Thread.sleep(time * 1000);
-            reporter.log(LogStatus.INFO,"Waiting for :"+time+" Before Performing next action");
         }catch (final InterruptedException e){
             reporter.log(LogStatus.ERROR,"The Entered time format is incorrect"+getErrorMessage(e));
             Assert.fail();
@@ -186,8 +184,7 @@ public class CommonMethods extends BaseTest {
         try{
                 Assert.assertEquals(aTitle, eTitle);
                 reporter.log(LogStatus.PASS," ActualTitle : "+aTitle+" is matching with the ExpectedTitle: "+eTitle);
-            }
-            catch(Exception e){
+            } catch(Exception e){
                 reporter.log(LogStatus.ERROR," ActualTitle : "+aTitle+" is not matching with the ExpectedTitle : "+eTitle+" and the ERROR is : "+getErrorMessage(e));
                 Assert.fail();
             }
@@ -225,8 +222,6 @@ public class CommonMethods extends BaseTest {
         String finalImgPath = null;
 
         try {
-            /*FileUtils.copyFile(page.getScreenshotAs(OutputType.FILE), new File(imagePath));
-            reporter.log(LogStatus.INFO,"The ScreenShot is : "+imagePath);*/
             File source = ts.getScreenshotAs(OutputType.FILE);
 
             //after execution, you could see a folder "FailedTestsScreenshots" under src folder
@@ -243,11 +238,8 @@ public class CommonMethods extends BaseTest {
             Path relativePath = Paths.get(screenshotPath);
             Path finalPath = absolutePath.relativize(relativePath);
             finalImgPath = finalPath.toString();
-        }
-
-        catch (Exception e){
+        }catch (Exception e){
             reporter.log(LogStatus.INFO,"An Error occurred while taking ScreenShot Because of : "+e.getMessage().split("\n")[0].trim());
-
             Assert.fail();
         }
         return finalImgPath;
@@ -276,8 +268,6 @@ public class CommonMethods extends BaseTest {
            reporter.log(LogStatus.PASS,"Clicked on: "+eleName);
        }catch (Exception e){
            reporter.log(LogStatus.ERROR,"Failed to perform Click operation on "+eleName+" and the Error is : " + getErrorMessage(e));
-
-           //Assert.fail();
        }
     }
     //------------------------------------------------15--------------------------------------------------------------//
@@ -294,10 +284,7 @@ public class CommonMethods extends BaseTest {
            action.moveToElement(ele).click().perform();
            reporter.log(LogStatus.PASS,"Clicked on: "+eleName);
        }catch (Exception e) {
-
-           reporter.log(LogStatus.ERROR,"Failed to perform Click operation on "+eleName+" and the ERROR is : " + e.getMessage().split("\n")[0].trim());
-
-           Assert.fail();
+           reporter.log(LogStatus.ERROR,"Failed to perform Click operation on "+eleName+" and the ERROR is : " +getErrorMessage(e));
        }
     }
     //------------------------------------------------16--------------------------------------------------------------//
@@ -312,8 +299,7 @@ public class CommonMethods extends BaseTest {
         try{
             wait.until(ExpectedConditions.visibilityOf(findElement(by, value)));
             reporter.log(LogStatus.PASS,eleName+" is Visible");
-        }
-        catch (Exception e){
+        } catch (Exception e){
             reporter.log(LogStatus.ERROR,eleName+" Element is not Visible even after the time out and the Error is : "+getErrorMessage(e));
             Assert.fail();
         }
@@ -332,12 +318,12 @@ public class CommonMethods extends BaseTest {
             WebElement ele = findElement(by, value);
             ele.clear();
             ele.sendKeys(data);
+            if(eleName.equalsIgnoreCase("Password")){
+                data="**********";
+            }
             reporter.log(LogStatus.PASS,data+" : Entered in the "+eleName+" Text Field");
         }catch (Exception e){
-
-            //We do pass the path captured by this mehtod in to the extent reports using "logger.addScreenCapture" method.
             reporter.log(LogStatus.ERROR,"Failed to enter "+data+" in the "+eleName+" Text Field and the Error is : " +getErrorMessage(e));
-            Assert.fail();
         }
     }
     //------------------------------------------------18--------------------------------------------------------------//
@@ -391,10 +377,7 @@ public class CommonMethods extends BaseTest {
             allLinks = ele.size();
             reporter.log(LogStatus.INFO,"Total no of links present in the "+webPage+" are : " + allLinks);
         }catch (Exception e){
-
             reporter.log(LogStatus.ERROR,"Unable to count the total no of links present in the "+webPage+" and the Error is : "+e.getMessage().split("\n")[0].trim());
-
-            Assert.fail();
         }
         return allLinks;
     }
@@ -546,8 +529,8 @@ public class CommonMethods extends BaseTest {
         try{
             WebElement ele = findElement(by, value);
             jse.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", ele);
-            String screenshotPath = getScreenShot();
-            reporter.log(LogStatus.PASS,eleName+" : is Highlighted"+reporter.addScreenCapture(screenshotPath));
+            //String screenshotPath = getScreenShot();
+            reporter.log(LogStatus.PASS,eleName+" : is Highlighted");//+reporter.addScreenCapture(screenshotPath));
         }catch (Exception e){
             reporter.log(LogStatus.ERROR,"Failed to Highlight "+eleName+" and the ERROR is : "+getErrorMessage(e));
             Assert.fail();
@@ -778,6 +761,36 @@ public class CommonMethods extends BaseTest {
 
     //------------------------------------------------37--------------------------------------------------------------//
 
+    /**
+     * This Method is used to perform composite Action.
+     * @param by Element locator Type,
+     * @param value Element locator Value,
+     * @param eleName Element name that is print in the Report.
+     */
+    public void moveToElement(String by,String value,String eleName){
+        List<String> byList = new ArrayList<String>(Arrays.asList(by.split("\\|")));
+        List<String> valueList = new ArrayList<String>(Arrays.asList(value.split("\\|")));
+        if(byList.size()==valueList.size()) {
+            for (int i=0;i<=byList.size()-1;i++) {
+                String byData = byList.get(i);
+                String valueData = valueList.get(i);
+                try {
+                    WebElement ele = findElement(byData, valueData);
+                    action.moveToElement(ele).build().perform();
+                    if(i==byList.size()-1){
+                        action.moveToElement(ele).click().perform();
+                        reporter.log(LogStatus.PASS,"moved to : "+eleName+" and clicked");
+                        break;
+                    }
+                    sleep(2);
+                } catch (Exception e) {
+                    reporter.log(LogStatus.ERROR, "Failed to move to : " + eleName + " and the Error is " + getErrorMessage(e));
+                }
+            }
+        }else {
+            reporter.log(LogStatus.ERROR,"The given locator type and locator values length are not matching please check the given parameters");
+        }
+    }
     //------------------------------------------------38--------------------------------------------------------------//
 
     /**
@@ -792,7 +805,7 @@ public class CommonMethods extends BaseTest {
                         reporter.log(LogStatus.PASS,"UnExpected PopUp Occurred and closed ");
                     }catch(NoAlertPresentException n){
                     }catch (Exception e) {
-                        reporter.log(LogStatus.ERROR,"Failed to Handle the UnExpected Popup and The Error is : ");
+                        reporter.log(LogStatus.ERROR,"Failed to Handle the UnExpected Popup and The Error is : "+getErrorMessage(e));
                     }
                 }
             }

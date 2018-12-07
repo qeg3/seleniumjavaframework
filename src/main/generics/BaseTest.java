@@ -18,7 +18,7 @@ public abstract class BaseTest implements AutomationConstants{
     public static ExtentReports report;
     public static ExtentTest reporter;
     public static final long ITO =10;
-    public static String url="https://online.actitime.com/areddy";
+    public static String url="https://online.actitime.com/areddy/login.do";
 
     @Parameters({"platform","targetDriver"})
     @BeforeSuite

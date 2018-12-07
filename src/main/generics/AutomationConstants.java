@@ -31,4 +31,8 @@ public interface AutomationConstants {
     public static final String SQL_DRIVER="com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
     public static final String ORACLE_DRIVER="";
+
+    public static final String OBJECT_REPO="src/main/generics/resources/ObjectRepo.xls";
+
+    public static final String TEST_DATA="src/com/test/resources/TestData.xls";
 }
