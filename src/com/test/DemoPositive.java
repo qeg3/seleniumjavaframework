@@ -43,6 +43,7 @@ public class DemoPositive extends BaseTest {
         method.isEnabled(loginCheckBoxBy,loginCheckBoxVal,"ChBox");
         //method.click(loginCheckBoxBy,loginCheckBoxVal,"ChBox");
         method.getText(loginBTNBy,loginBTNval,"loginBTN");
+        method.isEnabled(loginBTNBy,loginBTNval,"ChBox");
         method.click(loginBTNBy,loginBTNval,"loginBTN");
         //method.sleep(10);
         method.verifyTitleContain(homePageTitle);

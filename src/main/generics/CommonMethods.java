@@ -46,8 +46,8 @@ public class CommonMethods extends BaseTest {
     public static String getErrorMessage(Exception e){
         String error=null;
         String[] message = e.getMessage().split(":");
-        //String screenshotPath = getScreenShot();
-        error= message[0].trim()+" : "+ message[1].trim()+" - Element info : "+ message[message.length - 1].trim();//+reporter.addScreenCapture(screenshotPath);
+        String screenshotPath = getScreenShot();
+        error= message[0].trim()+" : "+ message[1].trim()+" - Element info : "+ message[message.length - 1].trim()+reporter.addScreenCapture(screenshotPath);
         return error;
     }
     //-------------------------------------------------4--------------------------------------------------------------//
