@@ -216,32 +216,53 @@ public class CommonMethods extends BaseTest {
      * This Method is used to get screenshots and store the screenshot in the project directory
      * @return finalImgPath - Returns the Screenshot folder location.
      */
-    public static String getScreenShot() {
-        String dateName = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
-        TakesScreenshot ts = (TakesScreenshot) driver;
+
+    public static String platform(){
+        String platform = System.getProperty("os.name");
+        String value=null;
+        platform = platform.toUpperCase();
+        if (platform.contains("WINDOWS")) {
+            value= "Windows";
+        }else if (platform.contains("MAC")) {
+            value= "Mac";
+        }
+        return value;
+    }
+    public static String getScreenShot(){
+        String platform = platform();
         String finalImgPath = null;
-
         try {
-            File source = ts.getScreenshotAs(OutputType.FILE);
-
-            //after execution, you could see a folder "FailedTestsScreenshots" under src folder
-            finalImgPath = System.getProperty("user.dir") +"/"+ PHOTO_PATH  +"/"+ dateName + ".png";
-            File finalDestination = new File(finalImgPath);
-            FileUtils.copyFile(source, finalDestination);
-            //Getting the Parent Directory
-            File dirName = new File(System.getProperty("user.dir"));
-            String folderName = dirName.getName();
-            folderName = "/"+folderName;
-            int index = finalImgPath.indexOf(folderName);
-            String screenshotPath = finalImgPath.substring(index);
-            Path absolutePath = Paths.get(finalImgPath);
-            Path relativePath = Paths.get(screenshotPath);
-            Path finalPath = absolutePath.relativize(relativePath);
-            finalImgPath = finalPath.toString();
+            String imageName = getFormattedDateTime() + ".png";
+            TakesScreenshot page = (TakesScreenshot) driver;
+            switch (platform) {
+                case "Windows":
+                    String imagePath=PHOTO_PATH+"/"+imageName;
+                    FileUtils.copyFile(page.getScreenshotAs(OutputType.FILE), new File(imagePath));
+                    File dirName = new File(System.getProperty("user.dir"));
+                    finalImgPath = dirName + "\\" + PHOTO_PATH+"\\"+imageName;
+                    break;
+                case "Mac":
+                    File source = page.getScreenshotAs(OutputType.FILE);
+                    finalImgPath = System.getProperty("user.dir") +"/"+ PHOTO_PATH  +"/"+imageName;
+                    File finalDestination = new File(finalImgPath);
+                    FileUtils.copyFile(source, finalDestination);
+                    dirName = new File(System.getProperty("user.dir"));
+                    String folderName = dirName.getName();
+                    folderName = "/"+folderName;
+                    int index = finalImgPath.indexOf(folderName);
+                    String screenshotPath = finalImgPath.substring(index);
+                    Path absolutePath = Paths.get(finalImgPath);
+                    Path relativePath = Paths.get(screenshotPath);
+                    Path finalPath = absolutePath.relativize(relativePath);
+                    finalImgPath = finalPath.toString();
+                    break;
+            }
+            reporter.log(LogStatus.INFO,"The ScreenShot is: "+imageName+" is Stored in "+PHOTO_PATH);
         }catch (Exception e){
-            reporter.log(LogStatus.INFO,"An Error occurred while taking ScreenShot Because of : "+e.getMessage().split("\n")[0].trim());
+            reporter.log(LogStatus.FAIL,"An Error occurred while taking ScreenShot Because of : "+e.getMessage().split("\n")[0].trim());
             Assert.fail();
         }
+
         return finalImgPath;
     }
     //------------------------------------------------13--------------------------------------------------------------//
@@ -529,8 +550,8 @@ public class CommonMethods extends BaseTest {
         try{
             WebElement ele = findElement(by, value);
             jse.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", ele);
-            //String screenshotPath = getScreenShot();
-            reporter.log(LogStatus.PASS,eleName+" : is Highlighted");//+reporter.addScreenCapture(screenshotPath));
+            String screenshotPath = getScreenShot();
+            reporter.log(LogStatus.PASS,eleName+" : is Highlighted"+reporter.addScreenCapture(screenshotPath));
         }catch (Exception e){
             reporter.log(LogStatus.ERROR,"Failed to Highlight "+eleName+" and the ERROR is : "+getErrorMessage(e));
             Assert.fail();
