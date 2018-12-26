@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Suite" parallel="tests">
-    <parameter name="platform" value="Mobile"/><!--Platform config should be Windows,Mac,Mobile-->
-    <parameter name="targetDriver" value="Android"/><!--TargetDriver config should be Chrome,Firefox,Safari,
+    <parameter name="platform" value="Mac"/><!--Platform config should be Windows,Mac,Mobile-->
+    <parameter name="targetDriver" value="Chrome"/><!--TargetDriver config should be Chrome,Firefox,Safari,
                                                         IE,Android,IOS should selected based on the platform selected -->
     <test name="Test">
 

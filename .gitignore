@@ -1,9 +1,9 @@
 *.xml
 *.iml
-*.png
 *.jar
+*.png
+/Screenshots
 /target
 /Reports/*.html
-/Screenshots
 *.html
 /target/*
