@@ -26,8 +26,8 @@ public class CommonMethods extends BaseTest {
 
     //------------------------------------------------1---------------------------------------------------------------//
     private static final long ETO =10;
-    public static Actions action = new Actions(driver);
-    public static JavascriptExecutor jse=(JavascriptExecutor)driver;
+    private static Actions action = new Actions(driver);
+    private static JavascriptExecutor jse=(JavascriptExecutor)driver;
     //------------------------------------------------2---------------------------------------------------------------//
 
     /**
@@ -43,7 +43,7 @@ public class CommonMethods extends BaseTest {
      * @param e is the object of the Exception,
      * @return error message text.
      */
-    public static String getErrorMessage(Exception e){
+    private static String getErrorMessage(Exception e){
         String error=null;
         String[] message = e.getMessage().split(":");
         String screenshotPath = getScreenShot();
@@ -57,7 +57,7 @@ public class CommonMethods extends BaseTest {
      * is the format in which date has to return,
      * @return the current date and time in "dd_MM_yyyy_hh_mm_ss" format.
      */
-    public static String getFormattedDateTime(){
+    private static String getFormattedDateTime(){
         SimpleDateFormat simpleDate = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss");
         return simpleDate.format(new Date());
     }
@@ -70,7 +70,7 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @return element.
      */
-    public static WebElement findElement(String by,String value){
+    private static WebElement findElement(String by,String value){
         WebElement element=null;
         switch (by) {
             case "id":
@@ -109,7 +109,7 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @return element.
      */
-    public static List<WebElement> findElements(String by, String value) {
+    private static List<WebElement> findElements(String by, String value) {
         List<WebElement> element=null;
         switch (by) {
             case "id":
@@ -145,14 +145,13 @@ public class CommonMethods extends BaseTest {
      * This method is used to specify the Waiting Condition.
      * @param time is the condition to wait for no of seconds before it go for next step
      */
-    public int sleep(int time){
+    public void sleep(int time){
         try {
             Thread.sleep(time * 1000);
         }catch (final InterruptedException e){
             reporter.log(LogStatus.ERROR,"The Entered time format is incorrect"+getErrorMessage(e));
             Assert.fail();
         }
-        return time;
     }
     //-------------------------------------------------8-------------------------------------------------------------//
 
@@ -333,9 +332,8 @@ public class CommonMethods extends BaseTest {
      * @param by Element locator Type,
      * @param value Element locator Value,
      * @param eleName is the Text message that will print in the report,
-     * @return text present in the locator
      */
-    public String getText(String by, String value,String eleName){
+    public void getText(String by, String value,String eleName){
         String text ="";
         try {
             text = findElement(by, value).getText();
@@ -344,7 +342,6 @@ public class CommonMethods extends BaseTest {
             reporter.log(LogStatus.ERROR,"Failed to get Text present in the "+eleName+" and the Error is : "+getErrorMessage(e));
             Assert.fail();
         }
-        return text;
     }
     //------------------------------------------------19--------------------------------------------------------------//
 
@@ -356,7 +353,7 @@ public class CommonMethods extends BaseTest {
         new WebDriverWait(driver, ETO).until(ExpectedConditions.urlContains(expectedURL));
         String currentUrl = driver.getCurrentUrl();
         try {
-            Assert.assertEquals(currentUrl.contains(expectedURL),true);
+            Assert.assertTrue(currentUrl.contains(expectedURL));
             reporter.log(LogStatus.PASS,"ActualURL : "+currentUrl+" is matching with the ExpectedURL : "+expectedURL);
         }catch (Exception e){
             reporter.log(LogStatus.ERROR,"ActualURL : "+currentUrl+" is not matching with the ExpectedURL : "+expectedURL+" and the ERROR is : "+getErrorMessage(e));
@@ -792,24 +789,4 @@ public class CommonMethods extends BaseTest {
         }
     }
     //------------------------------------------------38--------------------------------------------------------------//
-
-    /**
-     * This Method is used to handle unexpected popups.
-     */
-    public static void handleAlert() {
-        Thread thread = new Thread(new Runnable() {
-            public void run() {
-                while(true) {
-                    try {
-                        driver.switchTo().alert().accept();
-                        reporter.log(LogStatus.PASS,"UnExpected PopUp Occurred and closed ");
-                    }catch(NoAlertPresentException n){
-                    }catch (Exception e) {
-                        reporter.log(LogStatus.ERROR,"Failed to Handle the UnExpected Popup and The Error is : "+getErrorMessage(e));
-                    }
-                }
-            }
-        });
-    }
-    //------------------------------------------------39--------------------------------------------------------------//
 }
