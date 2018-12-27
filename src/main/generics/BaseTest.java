@@ -79,7 +79,6 @@ public abstract class BaseTest implements AutomationConstants{
     public void startTest(Method method){
         String testName=method.getName();
         reporter=report.startTest(testName);
-        CommonMethods.handleAlert();
         CommonMethods.implicitWait(ITO);
         CommonMethods.enter_URL(url);
     }

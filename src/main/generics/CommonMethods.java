@@ -57,7 +57,7 @@ public class CommonMethods extends BaseTest {
      * is the format in which date has to return,
      * @return the current date and time in "dd_MM_yyyy_hh_mm_ss" format.
      */
-    private static String getFormattedDateTime(){
+    public static String getFormattedDateTime(){
         SimpleDateFormat simpleDate = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss");
         return simpleDate.format(new Date());
     }
@@ -70,7 +70,7 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @return element.
      */
-    private static WebElement findElement(String by,String value){
+    public static WebElement findElement(String by,String value){
         WebElement element=null;
         switch (by) {
             case "id":
@@ -109,7 +109,7 @@ public class CommonMethods extends BaseTest {
      * @param value Element locator Value,
      * @return element.
      */
-    private static List<WebElement> findElements(String by, String value) {
+    public static List<WebElement> findElements(String by, String value) {
         List<WebElement> element=null;
         switch (by) {
             case "id":
